@@ -13,4 +13,9 @@
 		android:summary="@string/bc_ring_on_hour_summary_text"
 		android:defaultValue="false" />
 
+	<CheckBoxPreference android:key="fetch_screen_off" 
+		android:title="@string/bc_fetch_when_screen_off_title_text"
+		android:summary="@string/bc_fetch_when_screen_off_summary_text"
+		android:defaultValue="true" />
+		
 </PreferenceScreen>

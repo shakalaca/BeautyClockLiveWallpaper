@@ -8,6 +8,9 @@
 	<string name="bc_choose_picture_source_text">Choose image source</string>
 	<string name="bc_ring_on_hour_title_text">Ring on every hour</string>
 	<string name="bc_ring_on_hour_summary_text">Be sure you have the bells</string>
+
+	<string name="bc_fetch_when_screen_off_title_text">Fetch picture when screen is off</string>
+	<string name="bc_fetch_when_screen_off_summary_text">This will reduce your battery time</string>
 	
 	<string-array name="bc_picture_source_entries_secret">
 		<item>Arthur</item>

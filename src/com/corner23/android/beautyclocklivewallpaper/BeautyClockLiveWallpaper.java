@@ -81,6 +81,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private FetchCurrentBeautyPictureTask mFetchCurrentBeautyPictureTask = null;
 	private PlayBellTask mPlayBellTask = null;
 	private boolean mBellHourly = false;
+	private boolean mFetchWhenScreenOff = true;
 
 	private int mScreenHeight = 0;
 	private int mScreenWidth = 0;
@@ -91,6 +92,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	
 	private ConnectivityManager cm = null;
 
+	private boolean mIsScreenOn = true;
+	
 	private String getPATH(int hour, int minutes) {
 		String URLstr = null;
 		switch (mPictureSource) {
@@ -439,6 +442,16 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.w(TAG, "onReceive");
+        	if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                Log.v(TAG, "Intent.ACTION_SCREEN_ON"); 
+                mIsScreenOn = true;
+				firstUpdate(context);
+				return;
+	    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+	            Log.v(TAG, "Intent.ACTION_SCREEN_OFF"); 
+	            mIsScreenOn = false;
+	    	}
+        	
 			if (intent.getAction().equals(Intent.ACTION_TIMEZONE_CHANGED)) {
 				String tz = intent.getStringExtra("time-zone");
 				mTime = new Time(TimeZone.getTimeZone(tz).getID());
@@ -456,6 +469,12 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			if (!(mHour == mTime.hour && mMinute == mTime.minute)) {
 				mHour = mTime.hour;
 				mMinute = mTime.minute;
+				
+				if (!mFetchWhenScreenOff && !mIsScreenOn) {
+					updateTimeForNextUpdate();
+					return;
+				}
+				
 				update(context);
 				startToPlayBell();
 			}
@@ -492,6 +511,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		if (mSharedPreferences != null) {
 			mPictureSource = Integer.parseInt(mSharedPreferences.getString("picture_source", "0"));
 			mBellHourly = mSharedPreferences.getBoolean("ring_hourly", false);
+			mFetchWhenScreenOff = mSharedPreferences.getBoolean("fetch_screen_off", true);
 		}
 
 		// register notification
@@ -499,6 +519,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		filter.addAction(Intent.ACTION_TIME_TICK);  
 		filter.addAction(Intent.ACTION_TIME_CHANGED);  
 		filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+		filter.addAction(Intent.ACTION_SCREEN_ON);
+		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		this.registerReceiver(mBroadcastReceiver, filter, null, null);
 		
 		// get connection manager for checking network status
@@ -567,6 +589,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		}
 
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+			mFetchWhenScreenOff = prefs.getBoolean("fetch_screen_off", true);
 			mBellHourly = prefs.getBoolean("ring_hourly", false);
 			int picturesource = Integer.parseInt(prefs.getString("picture_source", "0"));
 			if (picturesource != mPictureSource) {

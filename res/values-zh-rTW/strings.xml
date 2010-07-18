@@ -9,4 +9,7 @@
 	<string name="bc_ring_on_hour_title_text">整點報時</string>
 	<string name="bc_ring_on_hour_summary_text">請確認 SD 卡中有報時鈴聲</string>
 	
+	<string name="bc_fetch_when_screen_off_title_text">螢幕關閉時仍連網抓圖</string>
+	<string name="bc_fetch_when_screen_off_summary_text">這會減低你的電池可用時間</string>
+	
 </resources>
