@@ -289,9 +289,14 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		int height = bitmap.getHeight();
 		
 		if (height > width) {
-			double ratio = (float) mScreenHeight / height;
-			height = mScreenHeight;
+			double ratio = (float) mScreenWidth / width;
+			width = mScreenWidth;
+			height = (int) (height * ratio);
+			/*
+			double ratio = (float) (mScreenHeight - 60) / height;
+			height = mScreenHeight - 60;
 			width = (int) (width * ratio);
+			*/
 		} else {
 			double ratio = (float) mScreenWidth*2 / width;
 			width = mScreenWidth*2;
@@ -720,11 +725,15 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 					if (mCurrentBeautyBitmap != null) {
 						int width = mCurrentBeautyBitmap.getWidth();
 						int height = mCurrentBeautyBitmap.getHeight();
-						int Xpos = 0, Ypos = 0;
+						int offset = (mScreenHeight - 15 - height) / 2;
+						int Xpos = 0, Ypos = 15;
 						if (width > height) {
 							Xpos = nXOffset;
-							Ypos = (mScreenHeight - height) / 2 + 15;
 						}
+						if (offset > 0) {
+							Ypos += offset;
+						}
+						
 						c.drawColor(Color.BLACK);
 						c.drawBitmap(mCurrentBeautyBitmap, Xpos, Ypos, null);
 					}
