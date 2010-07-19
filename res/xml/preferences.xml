@@ -8,14 +8,19 @@
 		android:dialogTitle="@string/bc_choose_picture_source_text"
 		android:defaultValue="0" />
 
-	<CheckBoxPreference android:key="ring_hourly" 
-		android:title="@string/bc_ring_on_hour_title_text"
-		android:summary="@string/bc_ring_on_hour_summary_text"
-		android:defaultValue="false" />
-
 	<CheckBoxPreference android:key="fetch_screen_off" 
 		android:title="@string/bc_fetch_when_screen_off_title_text"
 		android:summary="@string/bc_fetch_when_screen_off_summary_text"
 		android:defaultValue="true" />
 		
+	<CheckBoxPreference android:key="fetch_larger_picture" 
+		android:title="@string/bc_fetch_larger_picture_title_text"
+		android:summary="@string/bc_fetch_larger_picture_summary_text"
+		android:defaultValue="true" />
+		
+	<CheckBoxPreference android:key="ring_hourly" 
+		android:title="@string/bc_ring_on_hour_title_text"
+		android:summary="@string/bc_ring_on_hour_summary_text"
+		android:defaultValue="false" />
+
 </PreferenceScreen>

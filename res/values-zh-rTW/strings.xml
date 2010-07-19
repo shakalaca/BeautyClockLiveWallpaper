@@ -12,4 +12,6 @@
 	<string name="bc_fetch_when_screen_off_title_text">螢幕關閉時仍連網抓圖</string>
 	<string name="bc_fetch_when_screen_off_summary_text">這會減低你的電池可用時間</string>
 	
+	<string name="bc_fetch_larger_picture_title_text">使用大圖</string>
+	<string name="bc_fetch_larger_picture_summary_text">如果網站有提供</string>
 </resources>

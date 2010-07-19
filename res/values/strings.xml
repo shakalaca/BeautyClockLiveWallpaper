@@ -12,6 +12,9 @@
 	<string name="bc_fetch_when_screen_off_title_text">Fetch picture when screen is off</string>
 	<string name="bc_fetch_when_screen_off_summary_text">This will reduce your battery time</string>
 	
+	<string name="bc_fetch_larger_picture_title_text">Use larger picture</string>
+	<string name="bc_fetch_larger_picture_summary_text">If web site provides</string>
+	
 	<string-array name="bc_picture_source_entries_secret">
 		<item>Arthur</item>
 		<item>ClockM</item>
