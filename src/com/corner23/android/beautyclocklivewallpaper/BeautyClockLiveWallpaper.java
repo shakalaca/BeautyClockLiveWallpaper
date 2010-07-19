@@ -367,10 +367,18 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		try {
 			urlc = url.openConnection(this.httpProxy);
 			urlc.setRequestProperty("User-Agent", "Mozilla/5.0");
-			if (mPictureSource == 7) {
+			if (mPictureSource == 9) {
 				urlc.setRequestProperty("Referer", "http://www.avtokei.jp/index.html");
-			} else if (mPictureSource == 3) {
+			} else if (mPictureSource == 7) {
 				urlc.setRequestProperty("Referer", "http://www.bijint.com/binan/");
+			} else if (mPictureSource == 6) {
+				urlc.setRequestProperty("Referer", "http://www.bijint.com/cc/");
+			} else if (mPictureSource == 5) {
+				urlc.setRequestProperty("Referer", "http://gal.bijint.com/");
+			} else if (mPictureSource == 4) {
+				urlc.setRequestProperty("Referer", "http://www.bijint.com/hk/");
+			} else if (mPictureSource == 3) {
+				urlc.setRequestProperty("Referer", "http://www.bijint.com/kr/");
 			} else if (mPictureSource == 2) {
 				urlc.setRequestProperty("Referer", "http://www.bijint.com/jp/");
 			}
