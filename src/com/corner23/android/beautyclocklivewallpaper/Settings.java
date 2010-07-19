@@ -1,5 +1,7 @@
 package com.corner23.android.beautyclocklivewallpaper;
 
+import java.io.File;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -11,7 +13,12 @@ public class Settings extends PreferenceActivity
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         getPreferenceManager().setSharedPreferencesName(BeautyClockLiveWallpaper.SHARED_PREFS_NAME);
-        addPreferencesFromResource(R.xml.preferences);
+		File secretParadise = new File("/sdcard/BeautyClock/showmeav");
+		if (secretParadise.exists()) {
+			addPreferencesFromResource(R.xml.preferences_secret);
+		} else {
+	        addPreferencesFromResource(R.xml.preferences);
+		}
         getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(
                 this);
     }
