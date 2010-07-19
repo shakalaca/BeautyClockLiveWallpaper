@@ -27,6 +27,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -75,6 +78,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private int mNextHour = 0;
 	private int mNextMinute = 0;
 
+	private Bitmap mErrorBitmap = null;
 	private Bitmap mCurrentBeautyBitmap = null;
 	private Bitmap mNextBeautyBitmap = null;
 	private FetchNextBeautyPictureTask mFetchNextBeautyPictureTask = null;
@@ -736,6 +740,27 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 						
 						c.drawColor(Color.BLACK);
 						c.drawBitmap(mCurrentBeautyBitmap, Xpos, Ypos, null);
+					} else {
+						Paint paint = new Paint();
+						// paint.setColor(Color.BLACK);
+						paint.setColor(Color.YELLOW);
+						paint.setAntiAlias(true);
+						paint.setStrokeCap(Paint.Cap.ROUND);
+						paint.setStyle(Paint.Style.STROKE);
+						paint.setStrokeWidth(5);
+						paint.setTextSize(120);
+						
+						/*
+						if (mErrorBitmap == null) {
+							Drawable dw = getResources().getDrawable(R.drawable.beautyclock_retry);
+							mErrorBitmap = ResizeBitmap(((BitmapDrawable)dw).getBitmap());
+						}
+						c.drawBitmap(mErrorBitmap, 0, 15, paint);
+						*/
+						String time = String.format("%02d:%02d", mHour, mMinute);
+						// c.drawText(time, mScreenWidth/2-150, 140, paint);
+						c.drawColor(Color.BLACK);
+						c.drawText(time, mScreenWidth/2-150, mScreenHeight/2-30, paint);
 					}
 				}
 			} finally {
