@@ -31,6 +31,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -256,10 +257,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				return null;
 			}
 			
-			if (mMinute == 0) 
-			{
-				MediaPlayer mp = new MediaPlayer();
+			if (mMinute == 0) {
 				try {
+					MediaPlayer mp = new MediaPlayer();
 					mp.setDataSource(String.format(BELL_TO_PLAY, mHour));
 					mp.prepare();
 					mp.start();
@@ -272,6 +272,11 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				}
 			}
 			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			mPlayBellTask = null;
 		}
 	}
 
@@ -535,6 +540,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				
 				if (!mFetchWhenScreenOff && !mIsScreenOn) {
 					updateTimeForNextUpdate();
+					startToPlayBell();
 					return;
 				}
 				
