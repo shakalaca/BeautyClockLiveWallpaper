@@ -30,6 +30,7 @@
 		<item>GAL-tokei</item>
 		<item>circuit-tokei</item>
 		<item>Binan-tokei</item>
+		<item>Lovely Time II</item>
 		<item>Your own tokei</item>
  		<item>AV tokei</item>
 	</string-array>
@@ -43,6 +44,7 @@
 		<item>GAL-tokei</item>
 		<item>circuit-tokei</item>
 		<item>Binan-tokei</item>
+		<item>Lovely Time II</item>
 		<item>Your own tokei</item>
 	</string-array>
 
@@ -57,5 +59,6 @@
 		<item>7</item>	
 		<item>8</item>	
 		<item>9</item>	
+		<item>10</item>	
 	</string-array>
 </resources>

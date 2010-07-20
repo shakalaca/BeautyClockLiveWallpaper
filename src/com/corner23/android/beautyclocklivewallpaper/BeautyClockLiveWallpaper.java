@@ -61,6 +61,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private static final String BINAN_PICTURE_URL = "http://www.bijint.com/binan/img/clk/%02d%02d.jpg";
 	private static final String BIJIN_HK_PICTURE_URL_L = "http://www.bijint.com/assets/pict/hk/590x450/%02d%02d.jpg";
 	private static final String BIJIN_HK_PICTURE_URL = "http://www.bijint.com/assets/pict/hk/240x320/%02d%02d.jpg";
+	private static final String LOVELY_TIME_PICTURE_URL = "http://gameflier.lovelytime.com.tw/photo/%02d%02d.JPG";
 	private static final String AVTOKEI_PICTURE_URL = "http://www.avtokei.jp/images/clocks/%02d/%02d%02d.jpg";
 	private static final String BELL_TO_PLAY = "/sdcard/BeautyClock/bell/bell%02d.mp3";
 
@@ -73,6 +74,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private static final String BIJIN_CC_PICTURE_PATH = SDCARD_BASE_PATH + "/bijin-cc/%02d%02d.jpg";
 	private static final String BINAN_PICTURE_PATH = SDCARD_BASE_PATH + "/binan/%02d%02d.jpg";
 	private static final String BIJIN_HK_PICTURE_PATH = SDCARD_BASE_PATH + "/bijin-hk/%02d%02d.jpg";
+	private static final String LOVELY_TIME_PICTURE_PATH = SDCARD_BASE_PATH + "/lovely/%02d%02d.JPG";
 	private static final String AVTOKEI_PICTURE_PATH = SDCARD_BASE_PATH + "/av/%02d%02d.jpg";
 	private static final String CUSTOM_PICTURE_PATH = SDCARD_BASE_PATH + "/custom/%02d%02d.jpg";
 	
@@ -117,8 +119,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		case 5: URLstr = String.format(BIJIN_GAL_PICTURE_PATH, hour, minutes); break;
 		case 6: URLstr = String.format(BIJIN_CC_PICTURE_PATH, hour, minutes); break;
 		case 7: URLstr = String.format(BINAN_PICTURE_PATH, hour, minutes); break;
-		case 8: URLstr = String.format(CUSTOM_PICTURE_PATH, hour, minutes); break;
-		case 9: URLstr = String.format(AVTOKEI_PICTURE_PATH, hour, hour, minutes); break;
+		case 8: URLstr = String.format(LOVELY_TIME_PICTURE_PATH, hour, minutes); break;
+		case 9: URLstr = String.format(CUSTOM_PICTURE_PATH, hour, minutes); break;
+		case 10: URLstr = String.format(AVTOKEI_PICTURE_PATH, hour, hour, minutes); break;
 		}
 		
 		return URLstr;
@@ -136,7 +139,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		case 5: URLstr = String.format(mFetchLargerPicture ? BIJIN_GAL_PICTURE_URL_L : BIJIN_GAL_PICTURE_URL, hour, minutes); break;
 		case 6: URLstr = String.format(BIJIN_CC_PICTURE_URL, hour, minutes); break;
 		case 7: URLstr = String.format(BINAN_PICTURE_URL, hour, minutes); break;
-		case 9: URLstr = String.format(AVTOKEI_PICTURE_URL, hour, hour, minutes); break;
+		case 8: URLstr = String.format(LOVELY_TIME_PICTURE_URL, hour, minutes); break;
+		case 10: URLstr = String.format(AVTOKEI_PICTURE_URL, hour, hour, minutes); break;
 		}
 		
 		return URLstr;
@@ -378,7 +382,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		try {
 			urlc = url.openConnection(this.httpProxy);
 			urlc.setRequestProperty("User-Agent", "Mozilla/5.0");
-			if (mPictureSource == 9) {
+			if (mPictureSource == 10) {
 				urlc.setRequestProperty("Referer", "http://www.avtokei.jp/index.html");
 			} else if (mPictureSource == 7) {
 				urlc.setRequestProperty("Referer", "http://www.bijint.com/binan/");
