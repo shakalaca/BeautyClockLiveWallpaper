@@ -258,6 +258,13 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			}
 			
 			if (mMinute == 0) {
+				// check phone settings first, if it's in silent or vibration mode, don't play bell!
+				AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+				if (am != null && (am.getRingerMode() == AudioManager.RINGER_MODE_SILENT ||
+									am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE)) {
+					return null;
+				}
+				
 				try {
 					MediaPlayer mp = new MediaPlayer();
 					mp.setDataSource(String.format(BELL_TO_PLAY, mHour));
