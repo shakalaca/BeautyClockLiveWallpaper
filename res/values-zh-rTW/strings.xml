@@ -17,4 +17,7 @@
 	
 	<string name="bc_fit_screen_title_text">適合螢幕</string>
 	<string name="bc_fit_screen_summary_text">將圖片延展至全螢幕</string>
+	
+	<string name="bc_save_picture_title_text">儲存圖片</string>
+	<string name="bc_save_picture_summary_text">留一份檔案在 SD 卡</string>
 </resources>

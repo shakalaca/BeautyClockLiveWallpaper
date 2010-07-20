@@ -18,6 +18,9 @@
 	<string name="bc_fit_screen_title_text">Fit the screen</string>
 	<string name="bc_fit_screen_summary_text">Scale the picture to full screen</string>
 	
+	<string name="bc_save_picture_title_text">Save picture</string>
+	<string name="bc_save_picture_summary_text">Save a copy in the SD card</string>
+	
 	<string-array name="bc_picture_source_entries_secret">
 		<item>Arthur</item>
 		<item>ClockM</item>

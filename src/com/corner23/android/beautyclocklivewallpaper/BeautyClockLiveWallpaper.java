@@ -6,6 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -91,6 +92,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private boolean mFetchWhenScreenOff = true;
 	private boolean mFetchLargerPicture = true;
 	private boolean mFitScreen = false;
+	private boolean mSaveCopy = false;
 
 	private int mScreenHeight = 0;
 	private int mScreenWidth = 0;
@@ -153,7 +155,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 					mNextBeautyBitmap = fetchBeautyPictureBitmapFromFile(fpath);
 				} else {
 					URL mURL = new URL(getURL(mNextHour, mNextMinute));
-					mNextBeautyBitmap = fetchBeautyPictureBitmapFromURL(mURL);
+					mNextBeautyBitmap = fetchBeautyPictureBitmapFromURL(mURL, mFile);
 				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -201,7 +203,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 					mCurrentBeautyBitmap = fetchBeautyPictureBitmapFromFile(fpath);
 				} else {
 					URL mURL = new URL(getURL(mHour, mMinute));
-					mCurrentBeautyBitmap = fetchBeautyPictureBitmapFromURL(mURL);
+					mCurrentBeautyBitmap = fetchBeautyPictureBitmapFromURL(mURL, mFile);
 				}
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -344,7 +346,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		return bitmap;
 	}
 	
-	private Bitmap fetchBeautyPictureBitmapFromURL(URL url) throws IOException {
+	private Bitmap fetchBeautyPictureBitmapFromURL(URL url, File saveFile) throws IOException {
 		Bitmap bitmap = null;
 		InputStream in = null;
 		OutputStream out = null;
@@ -405,6 +407,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			final byte[] data = dataStream.toByteArray();
 			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
+			if (mSaveCopy && saveFile != null && !saveFile.exists()) {
+				saveCopy(bitmap, saveFile);
+			}
 			Bitmap newbitmap = ResizeBitmap(bitmap);
 			if (newbitmap != null) {
 				bitmap = newbitmap;
@@ -435,6 +440,30 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private boolean saveCopy(Bitmap bitmap, File new_file) {
+		try {
+			// Try to create neccessary directory
+			new_file.mkdirs();
+
+			// output to tmp file
+			String fname_tmp = new_file.getAbsolutePath() + ".tmp";
+			FileOutputStream out = new FileOutputStream(fname_tmp);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+			out.flush();
+			out.close();
+
+			// if success, rename to correct file name
+			File tmp_file = new File(fname_tmp);
+			new_file.delete();
+			tmp_file.renameTo(new_file);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
 	}
 
 	private void update(Context context) {
@@ -544,6 +573,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			mFetchWhenScreenOff = mSharedPreferences.getBoolean("fetch_screen_off", true);
 			mFetchLargerPicture = mSharedPreferences.getBoolean("fetch_larger_picture", true);
 			mFitScreen = mSharedPreferences.getBoolean("fit_screen", false);
+			mSaveCopy = mSharedPreferences.getBoolean("save_copy", false);
 		}
 
 		// register notification
@@ -623,6 +653,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 			mFetchWhenScreenOff = prefs.getBoolean("fetch_screen_off", true);
 			mFitScreen = prefs.getBoolean("fit_screen", false);
+			mSaveCopy = prefs.getBoolean("save_copy", false);
 			boolean fetchlargerpicture = prefs.getBoolean("fetch_larger_picture", true);
 			mBellHourly = prefs.getBoolean("ring_hourly", false);
 			int picturesource = Integer.parseInt(prefs.getString("picture_source", "0"));
