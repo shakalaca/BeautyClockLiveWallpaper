@@ -14,6 +14,9 @@
 	
 	<string name="bc_fetch_larger_picture_title_text">Use larger picture</string>
 	<string name="bc_fetch_larger_picture_summary_text">If web site provides</string>
+
+	<string name="bc_fit_screen_title_text">Fit the screen</string>
+	<string name="bc_fit_screen_summary_text">Scale the picture to full screen</string>
 	
 	<string-array name="bc_picture_source_entries_secret">
 		<item>Arthur</item>

@@ -90,6 +90,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private boolean mBellHourly = false;
 	private boolean mFetchWhenScreenOff = true;
 	private boolean mFetchLargerPicture = true;
+	private boolean mFitScreen = false;
 
 	private int mScreenHeight = 0;
 	private int mScreenWidth = 0;
@@ -297,18 +298,26 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		int height = bitmap.getHeight();
 		
 		if (height > width) {
-			double ratio = (float) mScreenWidth / width;
+			if (mFitScreen) {
+				height = mScreenHeight;
+			} else {
+				double ratio = (float) mScreenWidth / width;
+				height = (int) (height * ratio);
+			}
 			width = mScreenWidth;
-			height = (int) (height * ratio);
 			/*
 			double ratio = (float) (mScreenHeight - 60) / height;
 			height = mScreenHeight - 60;
 			width = (int) (width * ratio);
 			*/
 		} else {
-			double ratio = (float) mScreenWidth*2 / width;
+			if (mFitScreen) {
+				height = mScreenHeight;
+			} else {
+				double ratio = (float) mScreenWidth*2 / width;
+				height = (int) (height * ratio);
+			}
 			width = mScreenWidth*2;
-			height = (int) (height * ratio);
 		}
 
 //		Log.w(TAG, "bitmap:"+ bitmap.getWidth() + "x" + bitmap.getHeight() + ":"+ bitmap.getDensity());
@@ -534,6 +543,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			mBellHourly = mSharedPreferences.getBoolean("ring_hourly", false);
 			mFetchWhenScreenOff = mSharedPreferences.getBoolean("fetch_screen_off", true);
 			mFetchLargerPicture = mSharedPreferences.getBoolean("fetch_larger_picture", true);
+			mFitScreen = mSharedPreferences.getBoolean("fit_screen", false);
 		}
 
 		// register notification
@@ -612,6 +622,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 			mFetchWhenScreenOff = prefs.getBoolean("fetch_screen_off", true);
+			mFitScreen = prefs.getBoolean("fit_screen", false);
 			boolean fetchlargerpicture = prefs.getBoolean("fetch_larger_picture", true);
 			mBellHourly = prefs.getBoolean("ring_hourly", false);
 			int picturesource = Integer.parseInt(prefs.getString("picture_source", "0"));
@@ -744,13 +755,16 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 					if (mCurrentBeautyBitmap != null) {
 						int width = mCurrentBeautyBitmap.getWidth();
 						int height = mCurrentBeautyBitmap.getHeight();
-						int offset = (mScreenHeight - 15 - height) / 2;
-						int Xpos = 0, Ypos = 15;
+						int Xpos = 0, Ypos = 0;
 						if (width > height) {
 							Xpos = nXOffset;
 						}
-						if (offset > 0) {
-							Ypos += offset;
+						if (!mFitScreen) {
+							Xpos = 15;
+							int offset = (mScreenHeight - 15 - height) / 2;
+							if (offset > 0) {
+								Ypos += offset;
+							}
 						}
 						
 						c.drawColor(Color.BLACK);

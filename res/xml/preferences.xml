@@ -18,6 +18,11 @@
 		android:summary="@string/bc_fetch_larger_picture_summary_text"
 		android:defaultValue="true" />
 		
+	<CheckBoxPreference android:key="fit_screen" 
+		android:title="@string/bc_fit_screen_title_text"
+		android:summary="@string/bc_fit_screen_summary_text"
+		android:defaultValue="false" />
+		
 	<CheckBoxPreference android:key="ring_hourly" 
 		android:title="@string/bc_ring_on_hour_title_text"
 		android:summary="@string/bc_ring_on_hour_summary_text"
