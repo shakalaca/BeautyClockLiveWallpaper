@@ -791,7 +791,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 							Xpos = nXOffset;
 						}
 						if (!mFitScreen) {
-							Xpos = 15;
+							Ypos = 15;
 							int offset = (mScreenHeight - 15 - height) / 2;
 							if (offset > 0) {
 								Ypos += offset;
