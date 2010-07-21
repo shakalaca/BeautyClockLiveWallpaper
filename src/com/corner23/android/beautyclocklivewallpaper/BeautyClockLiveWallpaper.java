@@ -29,8 +29,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -79,6 +77,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private static final String AVTOKEI_PICTURE_PATH = SDCARD_BASE_PATH + "/av/%02d%02d.jpg";
 	private static final String CUSTOM_PICTURE_PATH = SDCARD_BASE_PATH + "/custom/%02d%02d.jpg";
 	
+	public static final String BROADCAST_WALLPAPER_UPDATE = BeautyClockLiveWallpaper.class.getName() + ":UPDATE";
+
 	private Time mTime = new Time();
 	private int mHour = 0;
 	private int mMinute = 0;
@@ -234,6 +234,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 					startToFetchCurrentBeautyPicture();
 					return;
 				}
+			} else {
+				Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
+				sendBroadcast(i);
 			}
 			
 			startToFetchNextBeautyPicture();
@@ -502,6 +505,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			
 			if (mNextBeautyBitmap != null) {
 				mCurrentBeautyBitmap = mNextBeautyBitmap;
+				Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
+				sendBroadcast(i);
 			}
 			
 			mTime.setToNow();
@@ -648,13 +653,13 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	
 	class BeautyClockEngine extends Engine implements SharedPreferences.OnSharedPreferenceChangeListener {
 		
-		private boolean bVisible;
 		private int nXOffset = 0;        
 		private SharedPreferences mPrefs;
 
-	    private final Handler mHandler = new Handler();		
-		private final Runnable drawPaper = new Runnable() {
-			public void run() {
+		private BroadcastReceiver mWallpaperUpdateBroadcastReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
 				draw();
 			}
 		};
@@ -743,6 +748,12 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			Log.d(TAG, "onDesiredSizeChanged");
 			super.onDesiredSizeChanged(desiredWidth, desiredHeight);
 		}
+
+		@Override
+		public void onSurfaceDestroyed(SurfaceHolder holder) {
+			// Log.d(TAG, "onSurfaceDestroyed");
+			super.onSurfaceDestroyed(holder);
+		}
 */
 		@Override
 		public void onCreate(SurfaceHolder surfaceHolder) {
@@ -750,13 +761,18 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			super.onCreate(surfaceHolder);
 
 			setTouchEventsEnabled(false);
+	    	
+	    	IntentFilter filter = new IntentFilter();
+	    	filter.addAction(BROADCAST_WALLPAPER_UPDATE);
+	    	BeautyClockLiveWallpaper.this.registerReceiver(mWallpaperUpdateBroadcastReceiver, filter);
 		}
 
 		@Override
 		public void onDestroy() {
 			// Log.d(TAG, "onDestroy (engine)");
 			super.onDestroy();
-            mHandler.removeCallbacks(drawPaper);
+
+            BeautyClockLiveWallpaper.this.unregisterReceiver(mWallpaperUpdateBroadcastReceiver);
 		}
 
 		@Override
@@ -771,26 +787,15 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		@Override
 		public void onSurfaceChanged(SurfaceHolder holder, int format,
 				int width, int height) {
-			Log.d(TAG, "onSurfaceChanged:" + width + "," + height);
+			// Log.d(TAG, "onSurfaceChanged:" + width + "," + height);
 			draw();
-		}
-
-		@Override
-		public void onSurfaceDestroyed(SurfaceHolder holder) {
-			// Log.d(TAG, "onSurfaceDestroyed");
-			super.onSurfaceDestroyed(holder);
-			bVisible = false;
-			mHandler.removeCallbacks(drawPaper);
 		}
 
 		@Override
 		public void onVisibilityChanged(boolean visible) {
 			// Log.d(TAG, "onVisibilityChanged:" + visible);
-			bVisible = visible;
 			if (visible) {
 				draw();
-			} else {
-				mHandler.removeCallbacks(drawPaper);
 			}
 		}
 
@@ -844,11 +849,6 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				if (c != null) {
 					holder.unlockCanvasAndPost(c);
 				}
-			}
-			
-			mHandler.removeCallbacks(drawPaper);
-			if (bVisible) {
-				mHandler.postDelayed(drawPaper, 1000);
 			}
 		}
 	}
