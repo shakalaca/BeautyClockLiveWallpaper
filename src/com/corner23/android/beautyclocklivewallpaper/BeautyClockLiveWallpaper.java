@@ -34,7 +34,6 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.service.wallpaper.WallpaperService;
 import android.text.format.Time;
 import android.util.Log;
@@ -43,6 +42,8 @@ import android.view.SurfaceHolder;
 public class BeautyClockLiveWallpaper extends WallpaperService {
 
 	public static final String SHARED_PREFS_NAME = "bclw_settings";
+	public static final String BROADCAST_WALLPAPER_UPDATE = BeautyClockLiveWallpaper.class.getName() + ":UPDATE";
+
 	private static final String TAG = "BeautyClockLiveWallpaper";
 
 	private static final int IO_BUFFER_SIZE = 4096;
@@ -76,21 +77,27 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private static final String LOVELY_TIME_PICTURE_PATH = SDCARD_BASE_PATH + "/lovely/%02d%02d.JPG";
 	private static final String AVTOKEI_PICTURE_PATH = SDCARD_BASE_PATH + "/av/%02d%02d.jpg";
 	private static final String CUSTOM_PICTURE_PATH = SDCARD_BASE_PATH + "/custom/%02d%02d.jpg";
-	
-	public static final String BROADCAST_WALLPAPER_UPDATE = BeautyClockLiveWallpaper.class.getName() + ":UPDATE";
 
+	private static final int BCLW_FETCH_STATE_OTHER_FAILED = -1;
+	private static final int BCLW_FETCH_STATE_SUCCESS = 0;
+	private static final int BCLW_FETCH_STATE_FILE_NOT_FOUND = 1;
+	private static final int BCLW_FETCH_STATE_TIMEOUT = 2;
+	private static final int BCLW_FETCH_STATE_IO_ERROR = 3;
+	
 	private Time mTime = new Time();
 	private int mHour = 0;
 	private int mMinute = 0;
 	private int mNextHour = 0;
 	private int mNextMinute = 0;
 
-	private Bitmap mErrorBitmap = null;
+	// private Bitmap mErrorBitmap = null;
 	private Bitmap mCurrentBeautyBitmap = null;
 	private Bitmap mNextBeautyBitmap = null;
 	private FetchNextBeautyPictureTask mFetchNextBeautyPictureTask = null;
 	private FetchCurrentBeautyPictureTask mFetchCurrentBeautyPictureTask = null;
 	private PlayBellTask mPlayBellTask = null;
+	
+	// preferences
 	private boolean mBellHourly = false;
 	private boolean mFetchWhenScreenOff = true;
 	private boolean mFetchLargerPicture = true;
@@ -103,7 +110,6 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private Proxy httpProxy;
 	private String httpProxyHost;
 	private Integer httpProxyPort;
-	
 	private ConnectivityManager cm = null;
 
 	private boolean mIsScreenOn = true;
@@ -152,6 +158,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		@Override
 		protected Integer doInBackground(Void... arg0) {
 			Log.w(TAG, "doInBackground:FetchNextBeautyPictureTask");
+			int ret = BCLW_FETCH_STATE_OTHER_FAILED;
 			mNextBeautyBitmap = null;
 			try {
 				String fpath = getPATH(mNextHour, mNextMinute);
@@ -162,25 +169,27 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 					URL mURL = new URL(getURL(mNextHour, mNextMinute));
 					mNextBeautyBitmap = fetchBeautyPictureBitmapFromURL(mURL, mFile);
 				}
+				ret = BCLW_FETCH_STATE_SUCCESS;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-				return 1;
+				ret = BCLW_FETCH_STATE_FILE_NOT_FOUND;
 			} catch (IOException e) {
 				e.printStackTrace();
+				ret = BCLW_FETCH_STATE_IO_ERROR;
 				if (cm != null) {
 					NetworkInfo ni = cm.getActiveNetworkInfo();
-					if (ni != null && ni.isConnected())
-						return 2;
+					if (ni != null && ni.isConnected()) {
+						ret = BCLW_FETCH_STATE_TIMEOUT;
+					}
 				}
-				return 3;
 			}
-			return 0;
+			return ret;
 		}
 		
 		protected void onPostExecute(Integer ret) {
 			Log.w(TAG, "onPostExecute:FetchNextBeautyPictureTask");
 			mFetchNextBeautyPictureTask = null;
-			if (ret == 2) {
+			if (ret == BCLW_FETCH_STATE_TIMEOUT) {
 				Log.w("BeautyClockUpdateService", "timeout, startToFetchNextBeautyPicture");
 				startToFetchNextBeautyPicture();
 			}
@@ -201,6 +210,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		@Override
 		protected Integer doInBackground(Void... arg0) {
 			Log.w(TAG, "doInBackground:FetchCurrentBeautyPictureTask");
+			int ret = BCLW_FETCH_STATE_OTHER_FAILED;
 			try {
 				String fpath = getPATH(mHour, mMinute);
 				File mFile = new File(fpath);
@@ -210,26 +220,28 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 					URL mURL = new URL(getURL(mHour, mMinute));
 					mCurrentBeautyBitmap = fetchBeautyPictureBitmapFromURL(mURL, mFile);
 				}
+				ret = BCLW_FETCH_STATE_SUCCESS;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-				return 1;
+				ret = BCLW_FETCH_STATE_FILE_NOT_FOUND;
 			} catch (IOException e) {
 				e.printStackTrace();
+				ret = BCLW_FETCH_STATE_IO_ERROR;
 				if (cm != null) {
 					NetworkInfo ni = cm.getActiveNetworkInfo();
-					if (ni != null && ni.isConnected())
-						return 2;
+					if (ni != null && ni.isConnected()) {
+						ret = BCLW_FETCH_STATE_TIMEOUT;
+					}
 				}
-				return 3;
 			}
-			return 0;
+			return ret;
 		}
 		
 		protected void onPostExecute(Integer ret) {
 			Log.w(TAG, "onPostExecute:FetchCurrentBeautyPictureTask");
 			mFetchCurrentBeautyPictureTask = null;
 			if (mCurrentBeautyBitmap == null) {
-				if (ret == 2) {
+				if (ret == BCLW_FETCH_STATE_TIMEOUT) {
 					Log.w("BeautyClockUpdateService", "timeout, startToFetchCurrentBeautyPicture");
 					startToFetchCurrentBeautyPicture();
 					return;
@@ -265,6 +277,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 				if (am != null && (am.getRingerMode() == AudioManager.RINGER_MODE_SILENT ||
 									am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE)) {
+					Log.i(TAG, "Phone is in vibration mode or silent mode");
 					return null;
 				}
 				
@@ -351,18 +364,14 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	}
 	
 	private Bitmap fetchBeautyPictureBitmapFromFile(String fpath) {
-		Bitmap bitmap = null;
 		try {
-			bitmap = BitmapFactory.decodeFile(fpath);
-			
-			Bitmap newbitmap = ResizeBitmap(bitmap);
-			if (newbitmap != null) {
-				bitmap = newbitmap;
-			}
+			Bitmap bitmap = BitmapFactory.decodeFile(fpath);
+
+			return ResizeBitmap(bitmap);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return bitmap;
+		return null;
 	}
 	
 	private Bitmap fetchBeautyPictureBitmapFromURL(URL url, File saveFile) throws IOException {
@@ -605,7 +614,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
 		filter.addAction(Intent.ACTION_SCREEN_ON);
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
-		this.registerReceiver(mBroadcastReceiver, filter, null, null);
+		this.registerReceiver(mBroadcastReceiver, filter);
 		
 		// get connection manager for checking network status
 		cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -707,7 +716,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 		@Override
 		public SurfaceHolder getSurfaceHolder() {
-			// Log.d(TAG, "getSurfaceHolder");
+			Log.d(TAG, "getSurfaceHolder");
 			return super.getSurfaceHolder();
 		}
 
@@ -751,7 +760,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 		@Override
 		public void onSurfaceDestroyed(SurfaceHolder holder) {
-			// Log.d(TAG, "onSurfaceDestroyed");
+			Log.d(TAG, "onSurfaceDestroyed");
 			super.onSurfaceDestroyed(holder);
 		}
 */
@@ -799,6 +808,62 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			}
 		}
 
+		void drawBeautyClock(Canvas c) {
+			int width = mCurrentBeautyBitmap.getWidth();
+			int height = mCurrentBeautyBitmap.getHeight();
+			int Xpos = 0, Ypos = 0;
+			
+			// picture across virtual desktop, set scrolling
+			if (width > height) {
+				Xpos = nXOffset;
+			}
+			if (!mFitScreen) {
+				// 20 is height of status bar ..
+				Ypos = 20;
+				int offset = (mScreenHeight - 20 - height) / 2;
+				if (offset > 0) {
+					Ypos += offset;
+				}
+			}
+			
+			// clean before drawing
+			c.drawColor(Color.BLACK);
+			c.drawBitmap(mCurrentBeautyBitmap, Xpos, Ypos, null);
+		}
+		
+		void drawErrorScreen(Canvas c) {
+			// setup paint for drawing digitl clock
+			Paint paint = new Paint();
+			paint.setColor(Color.YELLOW);
+			paint.setAntiAlias(true);
+			paint.setStrokeCap(Paint.Cap.ROUND);
+			paint.setStyle(Paint.Style.STROKE);
+			paint.setStrokeWidth(5);
+			paint.setTextSize(120);
+			
+			String time = String.format("%02d:%02d", mHour, mMinute);
+			c.drawColor(Color.BLACK);
+			c.drawText(time, mScreenWidth/2-150, mScreenHeight/2-30, paint);
+			
+/*
+			Paint paint = new Paint();
+			paint.setColor(Color.BLACK);
+			paint.setAntiAlias(true);
+			paint.setStrokeCap(Paint.Cap.ROUND);
+			paint.setStyle(Paint.Style.STROKE);
+			paint.setStrokeWidth(5);
+			paint.setTextSize(120);
+			
+			if (mErrorBitmap == null) {
+				Drawable dw = getResources().getDrawable(R.drawable.beautyclock_retry);
+				mErrorBitmap = ResizeBitmap(((BitmapDrawable)dw).getBitmap());
+			}
+			c.drawBitmap(mErrorBitmap, 0, 15, paint);
+			String time = String.format("%02d:%02d", mHour, mMinute);
+			/c.drawText(time, mScreenWidth/2-150, 140, paint);
+*/
+		}
+		
 		void draw() {
 			final SurfaceHolder holder = getSurfaceHolder();
 			Canvas c = null;
@@ -806,43 +871,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				c = holder.lockCanvas();
 				if (c != null) {
 					if (mCurrentBeautyBitmap != null) {
-						int width = mCurrentBeautyBitmap.getWidth();
-						int height = mCurrentBeautyBitmap.getHeight();
-						int Xpos = 0, Ypos = 0;
-						if (width > height) {
-							Xpos = nXOffset;
-						}
-						if (!mFitScreen) {
-							Ypos = 15;
-							int offset = (mScreenHeight - 15 - height) / 2;
-							if (offset > 0) {
-								Ypos += offset;
-							}
-						}
-						
-						c.drawColor(Color.BLACK);
-						c.drawBitmap(mCurrentBeautyBitmap, Xpos, Ypos, null);
+						drawBeautyClock(c);
 					} else {
-						Paint paint = new Paint();
-						// paint.setColor(Color.BLACK);
-						paint.setColor(Color.YELLOW);
-						paint.setAntiAlias(true);
-						paint.setStrokeCap(Paint.Cap.ROUND);
-						paint.setStyle(Paint.Style.STROKE);
-						paint.setStrokeWidth(5);
-						paint.setTextSize(120);
-						
-						/*
-						if (mErrorBitmap == null) {
-							Drawable dw = getResources().getDrawable(R.drawable.beautyclock_retry);
-							mErrorBitmap = ResizeBitmap(((BitmapDrawable)dw).getBitmap());
-						}
-						c.drawBitmap(mErrorBitmap, 0, 15, paint);
-						*/
-						String time = String.format("%02d:%02d", mHour, mMinute);
-						// c.drawText(time, mScreenWidth/2-150, 140, paint);
-						c.drawColor(Color.BLACK);
-						c.drawText(time, mScreenWidth/2-150, mScreenHeight/2-30, paint);
+						drawErrorScreen(c);
 					}
 				}
 			} finally {
