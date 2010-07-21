@@ -8,6 +8,13 @@ Just for fun, any questions feel free contact me :-)
 
 E-mail: shakalaca AT gmail dot com
 
+2010-07-21 v1.5:
+* Use broadcast receiver instead of polling
+
+2010-07-20 v1.4:
+* Support Lovely Time II
+* Verify bell
+
 2010-07-17 v1.1:
 * Add an option for user to stop fetching picture when screen is off
 * Adjust the wallpaper to fit screen.
