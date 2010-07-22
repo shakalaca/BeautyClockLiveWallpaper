@@ -13,7 +13,7 @@ public class Settings extends PreferenceActivity
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         getPreferenceManager().setSharedPreferencesName(BeautyClockLiveWallpaper.SHARED_PREFS_NAME);
-		File secretParadise = new File("/sdcard/BeautyClock/showmeav");
+		File secretParadise = new File("/sdcard/BeautyClock/givemepower");
 		if (secretParadise.exists()) {
 			addPreferencesFromResource(R.xml.preferences_secret);
 		} else {
