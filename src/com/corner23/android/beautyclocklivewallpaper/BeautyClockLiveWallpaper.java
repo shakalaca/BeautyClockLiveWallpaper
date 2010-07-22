@@ -110,6 +110,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private ConnectivityManager cm = null;
 
 	private boolean mIsScreenOn = true;
+	private boolean mRegScreenBR = false;
+	private boolean mRegTimeBR = false;
 	
 	private String getPATH(int hour, int minutes) {
 		String URLstr = null;
@@ -195,11 +197,14 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 	private void startToFetchNextBeautyPicture() {
 		try {
-			if (mFetchNextBeautyPictureTask == null) {
-				mFetchNextBeautyPictureTask = new FetchNextBeautyPictureTask();
+			if (mFetchNextBeautyPictureTask != null &&
+					mFetchNextBeautyPictureTask.getStatus() == AsyncTask.Status.RUNNING) {
+				mFetchNextBeautyPictureTask.cancel(true);
 			}
+
+			mFetchNextBeautyPictureTask = new FetchNextBeautyPictureTask();
 			mFetchNextBeautyPictureTask.execute();
-		} catch(RejectedExecutionException e) {
+		} catch (RejectedExecutionException e) {
 			e.printStackTrace();
 		}
 	}
@@ -256,9 +261,12 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 	private void startToFetchCurrentBeautyPicture(){
 		try {
-			if (mFetchCurrentBeautyPictureTask == null) {
-				mFetchCurrentBeautyPictureTask = new FetchCurrentBeautyPictureTask();
+			if (mFetchCurrentBeautyPictureTask != null &&
+					mFetchCurrentBeautyPictureTask.getStatus() == AsyncTask.Status.RUNNING) {
+				mFetchCurrentBeautyPictureTask.cancel(true);
 			}
+
+			mFetchCurrentBeautyPictureTask = new FetchCurrentBeautyPictureTask();
 			mFetchCurrentBeautyPictureTask.execute();
 		} catch(RejectedExecutionException e) {
 			e.printStackTrace();
@@ -306,9 +314,12 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 	private void startToPlayBell() {
 		try {
-			if (mPlayBellTask == null) {
-				mPlayBellTask = new PlayBellTask();
+			if (mPlayBellTask != null &&
+					mPlayBellTask.getStatus() == AsyncTask.Status.RUNNING) {
+				mPlayBellTask.cancel(true);
 			}
+
+			mPlayBellTask = new PlayBellTask();
 			mPlayBellTask.execute();
 		} catch(RejectedExecutionException e) {
 			e.printStackTrace();
@@ -495,20 +506,27 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		}
 	}
 
-	private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+	private final BroadcastReceiver mScreenBroadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.w(TAG, "onReceive");
+			Log.w(TAG, "mScreenBroadcastReceiver:onReceive");
         	if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
                 // Log.v(TAG, "Intent.ACTION_SCREEN_ON"); 
                 mIsScreenOn = true;
 				firstUpdate();
-				return;
+				registerTimeBroadcastReceiver();
 	    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 	            // Log.v(TAG, "Intent.ACTION_SCREEN_OFF"); 
 	            mIsScreenOn = false;
+	            unregisterTimeBroadcastReceiver();
 	    	}
-        	
+		}
+	};
+
+	private final BroadcastReceiver mTimeBroadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.w(TAG, "mTimeBroadcastReceiver:onReceive");
 			if (intent.getAction().equals(Intent.ACTION_TIMEZONE_CHANGED)) {
 				String tz = intent.getStringExtra("time-zone");
 				mTime = new Time(TimeZone.getTimeZone(tz).getID());
@@ -538,7 +556,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			}
 		}
 	};
-
+	
 	private void updateTimeForNextUpdate() {
 		mNextHour = mTime.hour;
 		mNextMinute = mTime.minute;
@@ -575,6 +593,41 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		mPictureSource = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_SOURCE, "0"));
 	}
 	
+	private void registerTimeBroadcastReceiver() {
+		if (!mRegTimeBR) {
+			IntentFilter filter = new IntentFilter();  
+			filter.addAction(Intent.ACTION_TIME_TICK);  
+			filter.addAction(Intent.ACTION_TIME_CHANGED);  
+			filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+			this.registerReceiver(mTimeBroadcastReceiver, filter);
+			mRegTimeBR = true;
+		}
+	}
+	
+	private void unregisterTimeBroadcastReceiver() {
+		if (mRegTimeBR) {
+			this.unregisterReceiver(mTimeBroadcastReceiver);
+			mRegTimeBR = false;
+		}
+	}
+	
+	private void registerScreenBroadcastReceiver() {
+		if (!mRegScreenBR) {
+			IntentFilter filter = new IntentFilter();  
+			filter.addAction(Intent.ACTION_SCREEN_ON);
+			filter.addAction(Intent.ACTION_SCREEN_OFF);
+			this.registerReceiver(mScreenBroadcastReceiver, filter);
+			mRegScreenBR = true;
+		}
+	}
+	
+	private void unregisterScreenBroadcastReceiver() {
+		if (mRegScreenBR) {
+			this.unregisterReceiver(mScreenBroadcastReceiver);
+			mRegScreenBR = false;
+		}
+	}
+	
 	@Override
 	public void onCreate() {
 		// read configuration
@@ -582,13 +635,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		readDefaultPrefs(mSharedPreferences);
 
 		// register notification
-		IntentFilter filter = new IntentFilter();  
-		filter.addAction(Intent.ACTION_TIME_TICK);  
-		filter.addAction(Intent.ACTION_TIME_CHANGED);  
-		filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
-		filter.addAction(Intent.ACTION_SCREEN_ON);
-		filter.addAction(Intent.ACTION_SCREEN_OFF);
-		this.registerReceiver(mBroadcastReceiver, filter);
+		registerTimeBroadcastReceiver();
+		registerScreenBroadcastReceiver();
 		
 		// get connection manager for checking network status
 		cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -622,7 +670,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		if (mFetchNextBeautyPictureTask != null) {
 			mFetchNextBeautyPictureTask.cancel(true);
 		}
-		this.unregisterReceiver(mBroadcastReceiver);
+		unregisterTimeBroadcastReceiver();
+		unregisterScreenBroadcastReceiver();
 		super.onDestroy();
 	}
 	    
@@ -801,9 +850,14 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 		@Override
 		public void onVisibilityChanged(boolean visible) {
-			// Log.d(TAG, "onVisibilityChanged:" + visible);
+			Log.d(TAG, "onVisibilityChanged:" + visible);
 			if (visible) {
+				mIsScreenOn = true;
+				registerTimeBroadcastReceiver();
 				draw();
+			} else {
+				mIsScreenOn = false;
+				unregisterTimeBroadcastReceiver();
 			}
 		}
 
