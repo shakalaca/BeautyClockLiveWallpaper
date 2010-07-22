@@ -694,7 +694,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
 			mFetchWhenScreenOff = prefs.getBoolean("fetch_screen_off", true);
-			mFitScreen = prefs.getBoolean("fit_screen", false);
+			boolean fitscreen = prefs.getBoolean("fit_screen", false);
 			mSaveCopy = prefs.getBoolean("save_copy", false);
 			boolean fetchlargerpicture = prefs.getBoolean("fetch_larger_picture", true);
 			mBellHourly = prefs.getBoolean("ring_hourly", false);
@@ -703,6 +703,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				mPictureSource = picturesource;
 				mFetchLargerPicture = fetchlargerpicture;
 				firstUpdate(BeautyClockLiveWallpaper.this);
+			} else if (fitscreen != mFitScreen) {
+				mFitScreen = fitscreen;
+				draw();
 			}
 		}
 
