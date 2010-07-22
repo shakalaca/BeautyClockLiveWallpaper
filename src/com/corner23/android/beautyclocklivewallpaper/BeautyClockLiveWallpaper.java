@@ -84,8 +84,6 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private static final int BCLW_FETCH_STATE_TIMEOUT = 2;
 	private static final int BCLW_FETCH_STATE_IO_ERROR = 3;
 	
-	private static final int STATUS_BAR_HEIGHT = 38;
-	
 	private Time mTime = new Time();
 	private int mHour = 0;
 	private int mMinute = 0;
@@ -105,9 +103,6 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private boolean mFetchLargerPicture = true;
 	private boolean mFitScreen = false;
 	private boolean mSaveCopy = false;
-
-	private int mScreenHeight = 0;
-	private int mScreenWidth = 0;
 
 	private Proxy httpProxy;
 	private String httpProxyHost;
@@ -200,7 +195,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 	private void startToFetchNextBeautyPicture() {
 		try {
-			mFetchNextBeautyPictureTask = new FetchNextBeautyPictureTask();
+			if (mFetchNextBeautyPictureTask == null) {
+				mFetchNextBeautyPictureTask = new FetchNextBeautyPictureTask();
+			}
 			mFetchNextBeautyPictureTask.execute();
 		} catch(RejectedExecutionException e) {
 			e.printStackTrace();
@@ -259,7 +256,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 	private void startToFetchCurrentBeautyPicture(){
 		try {
-			mFetchCurrentBeautyPictureTask = new FetchCurrentBeautyPictureTask();
+			if (mFetchCurrentBeautyPictureTask == null) {
+				mFetchCurrentBeautyPictureTask = new FetchCurrentBeautyPictureTask();
+			}
 			mFetchCurrentBeautyPictureTask.execute();
 		} catch(RejectedExecutionException e) {
 			e.printStackTrace();
@@ -307,7 +306,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 
 	private void startToPlayBell() {
 		try {
-			mPlayBellTask = new PlayBellTask();
+			if (mPlayBellTask == null) {
+				mPlayBellTask = new PlayBellTask();
+			}
 			mPlayBellTask.execute();
 		} catch(RejectedExecutionException e) {
 			e.printStackTrace();
@@ -325,52 +326,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		}
 	}
 
-	private Bitmap ResizeBitmap(Bitmap bitmap) {
-		if (bitmap == null) {
-			return null;
-		}
 
-		int width = bitmap.getWidth();
-		int height = bitmap.getHeight();
-		
-		if (mScreenWidth > mScreenHeight) {
-			double ratio = (float) (mScreenHeight - STATUS_BAR_HEIGHT) / height;
-			width = (int) (width * ratio);
-			height = mScreenHeight - STATUS_BAR_HEIGHT;
-		} else {
-			if (height > width) {
-				if (mFitScreen) {
-					height = mScreenHeight - STATUS_BAR_HEIGHT;
-				} else {
-					double ratio = (float) mScreenWidth / width;
-					height = (int) (height * ratio);
-				}
-				width = mScreenWidth;
-				/*
-				double ratio = (float) (mScreenHeight - 60) / height;
-				height = mScreenHeight - 60;
-				width = (int) (width * ratio);
-				*/
-			} else {
-				if (mFitScreen) {
-					height = mScreenHeight - STATUS_BAR_HEIGHT;
-				} else {
-					double ratio = (float) mScreenWidth*2 / width;
-					height = (int) (height * ratio);
-				}
-				width = mScreenWidth*2;
-			}
-		}
-
-//		Log.w(TAG, "bitmap:"+ bitmap.getWidth() + "x" + bitmap.getHeight() + ":"+ bitmap.getDensity());
-//		Log.w(TAG, "bitmap:"+ bitmap.getWidth()*bitmap.getHeight());
-		Bitmap bitmapNew = Bitmap.createScaledBitmap(bitmap, width, height, true);
-//			Log.w(TAG,"scaled !!!!!!!!!!");
-//			Log.w(TAG,"bitmap:"+ bitmap.getWidth() + "x" + bitmap.getHeight() + ":"+ bitmap.getDensity());
-//			Log.w(TAG,"bitmap:"+ bitmap.getWidth()*bitmap.getHeight());
-		return bitmapNew;
-	}
-	
 	private Bitmap fetchBeautyPictureBitmapFromFile(String fpath) {
 		try {
 //			Bitmap bitmap = BitmapFactory.decodeFile(fpath);
@@ -479,6 +435,10 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	}
 	
 	private boolean saveCopy(Bitmap bitmap, File new_file) {
+		if (bitmap == null || new_file == null) {
+			return false;
+		}
+		
 		try {
 			// Try to create neccessary directory
 			new_file.mkdirs();
@@ -486,7 +446,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			// output to tmp file
 			String fname_tmp = new_file.getAbsolutePath() + ".tmp";
 			FileOutputStream out = new FileOutputStream(fname_tmp);
-			bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
 			out.flush();
 			out.close();
 
@@ -502,7 +462,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		return true;
 	}
 
-	private void update(Context context) {
+	private void update() {
 		try {
 			boolean reget = false;
 			if (mFetchCurrentBeautyPictureTask != null) {
@@ -516,7 +476,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			}
 			
 			if (reget) {
-				firstUpdate(context);
+				firstUpdate();
 				return;
 			}
 			
@@ -540,12 +500,12 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		public void onReceive(Context context, Intent intent) {
 			Log.w(TAG, "onReceive");
         	if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                Log.v(TAG, "Intent.ACTION_SCREEN_ON"); 
+                // Log.v(TAG, "Intent.ACTION_SCREEN_ON"); 
                 mIsScreenOn = true;
-				firstUpdate(context);
+				firstUpdate();
 				return;
 	    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-	            Log.v(TAG, "Intent.ACTION_SCREEN_OFF"); 
+	            // Log.v(TAG, "Intent.ACTION_SCREEN_OFF"); 
 	            mIsScreenOn = false;
 	    	}
         	
@@ -558,7 +518,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				if (mFetchNextBeautyPictureTask != null) {
 					mFetchNextBeautyPictureTask.cancel(true);
 				}
-				firstUpdate(context);
+				firstUpdate();
 				return;
 			}
 			
@@ -573,7 +533,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 					return;
 				}
 				
-				update(context);
+				update();
 				startToPlayBell();
 			}
 		}
@@ -592,7 +552,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		mNextMinute++;
 	}
 
-	private void firstUpdate(Context context) {		
+	private void firstUpdate() {		
 		mTime.setToNow();
 		mHour = mTime.hour;
 		mMinute = mTime.minute;
@@ -610,7 +570,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		mFetchWhenScreenOff = prefs.getBoolean(Settings.PREF_FETCH_WHEN_SCREEN_OFF, true);
 		mBellHourly = prefs.getBoolean(Settings.PREF_RING_HOURLY, false);
 		mSaveCopy = prefs.getBoolean(Settings.PREF_SAVE_COPY, false);
-		mFitScreen= prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
+		mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
 		mFetchLargerPicture = prefs.getBoolean(Settings.PREF_FETCH_LARGER_PICTURE, true);
 		mPictureSource = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_SOURCE, "0"));
 	}
@@ -635,9 +595,6 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		
 		// setup proxy
 		this.configureHttpProxy();
-		
-		mScreenHeight = getResources().getDisplayMetrics().heightPixels;
-		mScreenWidth = getResources().getDisplayMetrics().widthPixels;
 	}
 	
 	@Override
@@ -650,7 +607,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.w(TAG, "onStartCommand");
 				
-		firstUpdate(this);
+		firstUpdate();
 
 		return START_STICKY;
 	}
@@ -676,6 +633,10 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	
 	class BeautyClockEngine extends Engine implements SharedPreferences.OnSharedPreferenceChangeListener {
 		
+		private static final int STATUS_BAR_HEIGHT = 38;
+		
+		private int mScreenHeight = 0;
+		private int mScreenWidth = 0;
 		private int nXOffset = 0;        
 		private SharedPreferences mPrefs;
 		private boolean bIsLarge = false;
@@ -689,14 +650,21 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		};
 		
 	    BeautyClockEngine() {
+			mScreenHeight = getResources().getDisplayMetrics().heightPixels;
+			mScreenWidth = getResources().getDisplayMetrics().widthPixels;
+
 	    	mPrefs = BeautyClockLiveWallpaper.this.getSharedPreferences(Settings.SHARED_PREFS_NAME, 0);
 	    	mPrefs.registerOnSharedPreferenceChangeListener(this);
 	    	onSharedPreferenceChanged(mPrefs, null);
 
-	    	firstUpdate(BeautyClockLiveWallpaper.this);
+	    	firstUpdate();
 		}
 
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+			if (prefs == null) {
+				return;
+			}
+			
 			if (key == null) {
 				readDefaultPrefs(prefs);
 				return;
@@ -713,10 +681,10 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 				draw();
 			} else if (key.equals(Settings.PREF_FETCH_LARGER_PICTURE)) {
 				mFetchLargerPicture = prefs.getBoolean(Settings.PREF_FETCH_LARGER_PICTURE, true);
-				firstUpdate(BeautyClockLiveWallpaper.this);
+				firstUpdate();
 			} else if (key.equals(Settings.PREF_PICTURE_SOURCE)) {
 				mPictureSource = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_SOURCE, "0"));
-				firstUpdate(BeautyClockLiveWallpaper.this);
+				firstUpdate();
 			}
 		}
 
@@ -839,7 +807,60 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			}
 		}
 
-		void drawBeautyClock(Canvas c, Bitmap bitmap_src) {
+		private Bitmap ResizeBitmap(Bitmap bitmap) {
+			if (bitmap == null) {
+				return null;
+			}
+
+			int width = bitmap.getWidth();
+			int height = bitmap.getHeight();
+			if (width == 0 || height == 0) {
+				return null;
+			}
+			
+			if (mScreenWidth > mScreenHeight) {
+				double ratio = (float) (mScreenHeight - STATUS_BAR_HEIGHT) / height;
+				width = (int) (width * ratio);
+				height = mScreenHeight - STATUS_BAR_HEIGHT;
+			} else {
+				if (height > width) {
+					if (mFitScreen) {
+						height = mScreenHeight - STATUS_BAR_HEIGHT;
+					} else {
+						double ratio = (float) mScreenWidth / width;
+						height = (int) (height * ratio);
+					}
+					width = mScreenWidth;
+					/*
+					double ratio = (float) (mScreenHeight - 60) / height;
+					height = mScreenHeight - 60;
+					width = (int) (width * ratio);
+					*/
+				} else {
+					if (mFitScreen) {
+						height = mScreenHeight - STATUS_BAR_HEIGHT;
+					} else {
+						double ratio = (float) mScreenWidth*2 / width;
+						height = (int) (height * ratio);
+					}
+					width = mScreenWidth*2;
+				}
+			}
+
+//			Log.w(TAG, "bitmap:"+ bitmap.getWidth() + "x" + bitmap.getHeight() + ":"+ bitmap.getDensity());
+//			Log.w(TAG, "bitmap:"+ bitmap.getWidth()*bitmap.getHeight());
+			Bitmap bitmapNew = Bitmap.createScaledBitmap(bitmap, width, height, true);
+//				Log.w(TAG,"scaled !!!!!!!!!!");
+//				Log.w(TAG,"bitmap:"+ bitmap.getWidth() + "x" + bitmap.getHeight() + ":"+ bitmap.getDensity());
+//				Log.w(TAG,"bitmap:"+ bitmap.getWidth()*bitmap.getHeight());
+			return bitmapNew;
+		}
+		
+		private void drawBeautyClock(Canvas c, Bitmap bitmap_src) {
+			if (c == null || bitmap_src == null) {
+				return;
+			}
+			
 			Bitmap bitmap_resized = ResizeBitmap(bitmap_src);
 			int width = bitmap_resized.getWidth();
 			int height = bitmap_resized.getHeight();
@@ -872,7 +893,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			c.drawBitmap(bitmap_resized, Xpos, Ypos, null);
 		}
 		
-		void drawErrorScreen(Canvas c) {
+		private void drawErrorScreen(Canvas c) {
 			// setup paint for drawing digitl clock
 			Paint paint = new Paint();
 			paint.setColor(Color.YELLOW);
@@ -905,7 +926,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 */
 		}
 		
-		void draw() {
+		private void draw() {
 			final SurfaceHolder holder = getSurfaceHolder();
 			Canvas c = null;
 			try {
