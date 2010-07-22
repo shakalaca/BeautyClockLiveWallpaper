@@ -41,9 +41,7 @@ import android.view.SurfaceHolder;
 
 public class BeautyClockLiveWallpaper extends WallpaperService {
 
-	public static final String SHARED_PREFS_NAME = "bclw_settings";
 	public static final String BROADCAST_WALLPAPER_UPDATE = BeautyClockLiveWallpaper.class.getName() + ":UPDATE";
-
 	private static final String TAG = "BeautyClockLiveWallpaper";
 
 	private static final int IO_BUFFER_SIZE = 4096;
@@ -603,19 +601,25 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 			
 		startToFetchCurrentBeautyPicture();
 	}
+
+	private void readDefaultPrefs(SharedPreferences prefs) {
+		if (prefs == null) {
+			return;
+		}
 		
+		mFetchWhenScreenOff = prefs.getBoolean(Settings.PREF_FETCH_WHEN_SCREEN_OFF, true);
+		mBellHourly = prefs.getBoolean(Settings.PREF_RING_HOURLY, false);
+		mSaveCopy = prefs.getBoolean(Settings.PREF_SAVE_COPY, false);
+		mFitScreen= prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
+		mFetchLargerPicture = prefs.getBoolean(Settings.PREF_FETCH_LARGER_PICTURE, true);
+		mPictureSource = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_SOURCE, "0"));
+	}
+	
 	@Override
 	public void onCreate() {
 		// read configuration
-		SharedPreferences mSharedPreferences = this.getSharedPreferences(SHARED_PREFS_NAME, 0);
-		if (mSharedPreferences != null) {
-			mPictureSource = Integer.parseInt(mSharedPreferences.getString("picture_source", "0"));
-			mBellHourly = mSharedPreferences.getBoolean("ring_hourly", false);
-			mFetchWhenScreenOff = mSharedPreferences.getBoolean("fetch_screen_off", true);
-			mFetchLargerPicture = mSharedPreferences.getBoolean("fetch_larger_picture", true);
-			mFitScreen = mSharedPreferences.getBoolean("fit_screen", false);
-			mSaveCopy = mSharedPreferences.getBoolean("save_copy", false);
-		}
+		SharedPreferences mSharedPreferences = this.getSharedPreferences(Settings.SHARED_PREFS_NAME, 0);
+		readDefaultPrefs(mSharedPreferences);
 
 		// register notification
 		IntentFilter filter = new IntentFilter();  
@@ -685,7 +689,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		};
 		
 	    BeautyClockEngine() {
-	    	mPrefs = BeautyClockLiveWallpaper.this.getSharedPreferences(SHARED_PREFS_NAME, 0);
+	    	mPrefs = BeautyClockLiveWallpaper.this.getSharedPreferences(Settings.SHARED_PREFS_NAME, 0);
 	    	mPrefs.registerOnSharedPreferenceChangeListener(this);
 	    	onSharedPreferenceChanged(mPrefs, null);
 
@@ -693,19 +697,26 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		}
 
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-			mFetchWhenScreenOff = prefs.getBoolean("fetch_screen_off", true);
-			boolean fitscreen = prefs.getBoolean("fit_screen", false);
-			mSaveCopy = prefs.getBoolean("save_copy", false);
-			boolean fetchlargerpicture = prefs.getBoolean("fetch_larger_picture", true);
-			mBellHourly = prefs.getBoolean("ring_hourly", false);
-			int picturesource = Integer.parseInt(prefs.getString("picture_source", "0"));
-			if (picturesource != mPictureSource || fetchlargerpicture != mFetchLargerPicture) {
-				mPictureSource = picturesource;
-				mFetchLargerPicture = fetchlargerpicture;
-				firstUpdate(BeautyClockLiveWallpaper.this);
-			} else if (fitscreen != mFitScreen) {
-				mFitScreen = fitscreen;
+			if (key == null) {
+				readDefaultPrefs(prefs);
+				return;
+			}
+			
+			if (key.equals(Settings.PREF_FETCH_WHEN_SCREEN_OFF)) {
+				mFetchWhenScreenOff = prefs.getBoolean(Settings.PREF_FETCH_WHEN_SCREEN_OFF, true);
+			} else if (key.equals(Settings.PREF_RING_HOURLY)) {
+				mBellHourly = prefs.getBoolean(Settings.PREF_RING_HOURLY, false);
+			} else if (key.equals(Settings.PREF_SAVE_COPY)) {
+				mSaveCopy = prefs.getBoolean(Settings.PREF_SAVE_COPY, false);
+			} else if (key.equals(Settings.PREF_FIT_SCREEN)) {
+				mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
 				draw();
+			} else if (key.equals(Settings.PREF_FETCH_LARGER_PICTURE)) {
+				mFetchLargerPicture = prefs.getBoolean(Settings.PREF_FETCH_LARGER_PICTURE, true);
+				firstUpdate(BeautyClockLiveWallpaper.this);
+			} else if (key.equals(Settings.PREF_PICTURE_SOURCE)) {
+				mPictureSource = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_SOURCE, "0"));
+				firstUpdate(BeautyClockLiveWallpaper.this);
 			}
 		}
 
