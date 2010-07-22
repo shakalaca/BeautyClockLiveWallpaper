@@ -52,13 +52,15 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	private static final String END_STR = "_0";	
 	private static final String ARTHUR_PICTURE_URL = "http://www.arthur.com.tw/photo/images/400/%02d%02d%s.JPG";
 	private static final String CLOCKM_PICTURE_URL = "http://www.clockm.com/tw/img/clk/hour/%02d%02d.jpg";
-	private static final String BIJIN_PICTURE_URL = "http://www.bijint.com/jp/img/clk/%02d%02d.jpg";
+	private static final String BIJIN_PICTURE_URL_L = "http://www.bijint.com/assets/pict/bijin/590x450/%02d%02d.jpg";
+	private static final String BIJIN_PICTURE_URL = "http://www.bijint.com/assets/pict/bijin/240x320/%02d%02d.jpg";
 	private static final String BIJIN_KOREA_PICTURE_URL_L = "http://www.bijint.com/assets/pict/kr/590x450/%02d%02d.jpg";
 	private static final String BIJIN_KOREA_PICTURE_URL = "http://www.bijint.com/assets/pict/kr/240x320/%02d%02d.jpg";
 	private static final String BIJIN_GAL_PICTURE_URL_L = "http://gal.bijint.com/assets/pict/gal/590x450/%02d%02d.jpg";
 	private static final String BIJIN_GAL_PICTURE_URL = "http://gal.bijint.com/assets/pict/gal/240x320/%02d%02d.jpg";
 	private static final String BIJIN_CC_PICTURE_URL = "http://www.bijint.com/assets/pict/cc/590x450/%02d%02d.jpg";
-	private static final String BINAN_PICTURE_URL = "http://www.bijint.com/binan/img/clk/%02d%02d.jpg";
+	private static final String BINAN_PICTURE_URL_L = "http://www.bijint.com/assets/pict/bijin/590x450/%02d%02d.jpg";
+	private static final String BINAN_PICTURE_URL = "http://www.bijint.com/assets/pict/bijin/240x320/%02d%02d.jpg";
 	private static final String BIJIN_HK_PICTURE_URL_L = "http://www.bijint.com/assets/pict/hk/590x450/%02d%02d.jpg";
 	private static final String BIJIN_HK_PICTURE_URL = "http://www.bijint.com/assets/pict/hk/240x320/%02d%02d.jpg";
 	private static final String LOVELY_TIME_PICTURE_URL = "http://gameflier.lovelytime.com.tw/photo/%02d%02d.JPG";
@@ -142,12 +144,12 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		default:
 		case 0:	URLstr = String.format(ARTHUR_PICTURE_URL, hour, minutes, (minutes == 0) ? END_STR : ""); break;
 		case 1:	URLstr = String.format(CLOCKM_PICTURE_URL, hour, minutes); break;
-		case 2: URLstr = String.format(BIJIN_PICTURE_URL, hour, minutes); break;
+		case 2: URLstr = String.format(mFetchLargerPicture ? BIJIN_PICTURE_URL_L : BIJIN_PICTURE_URL, hour, minutes); break;
 		case 3: URLstr = String.format(mFetchLargerPicture ? BIJIN_KOREA_PICTURE_URL_L : BIJIN_KOREA_PICTURE_URL, hour, minutes); break;
 		case 4: URLstr = String.format(mFetchLargerPicture ? BIJIN_HK_PICTURE_URL_L : BIJIN_HK_PICTURE_URL, hour, minutes); break;
 		case 5: URLstr = String.format(mFetchLargerPicture ? BIJIN_GAL_PICTURE_URL_L : BIJIN_GAL_PICTURE_URL, hour, minutes); break;
 		case 6: URLstr = String.format(BIJIN_CC_PICTURE_URL, hour, minutes); break;
-		case 7: URLstr = String.format(BINAN_PICTURE_URL, hour, minutes); break;
+		case 7: URLstr = String.format(mFetchLargerPicture ? BINAN_PICTURE_URL_L : BINAN_PICTURE_URL, hour, minutes); break;
 		case 8: URLstr = String.format(LOVELY_TIME_PICTURE_URL, hour, minutes); break;
 		case 10: URLstr = String.format(AVTOKEI_PICTURE_URL, hour, hour, minutes); break;
 		}
