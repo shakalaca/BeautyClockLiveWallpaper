@@ -797,8 +797,8 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		public void onOffsetsChanged(float xOffset, float yOffset,
 				float xOffsetStep, float yOffsetStep, int xPixelOffset,
 				int yPixelOffset) {
-			Log.d(TAG, "onOffsetsChanged");
-			Log.d(TAG, "x:" + xPixelOffset + ", y:" + yPixelOffset);
+			// Log.d(TAG, "onOffsetsChanged");
+			// Log.d(TAG, "x:" + xPixelOffset + ", y:" + yPixelOffset);
 			nXOffset = xPixelOffset;
 			if (bIsLarge) {
 				draw();
@@ -808,7 +808,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		@Override
 		public void onSurfaceChanged(SurfaceHolder holder, int format,
 				int width, int height) {
-			Log.d(TAG, "onSurfaceChanged:" + width + "," + height);
+			// Log.d(TAG, "onSurfaceChanged:" + width + "," + height);
 			
 			mScreenHeight = height;
 			mScreenWidth = width;
