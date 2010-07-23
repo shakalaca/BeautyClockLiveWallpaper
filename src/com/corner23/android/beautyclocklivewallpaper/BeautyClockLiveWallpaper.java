@@ -518,7 +518,9 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 	    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 	            // Log.v(TAG, "Intent.ACTION_SCREEN_OFF"); 
 	            mIsScreenOn = false;
-	            unregisterTimeBroadcastReceiver();
+				if (!mFetchWhenScreenOff) {
+					unregisterTimeBroadcastReceiver();
+				}
 	    	}
 		}
 	};
@@ -852,12 +854,7 @@ public class BeautyClockLiveWallpaper extends WallpaperService {
 		public void onVisibilityChanged(boolean visible) {
 			Log.d(TAG, "onVisibilityChanged:" + visible);
 			if (visible) {
-				mIsScreenOn = true;
-				registerTimeBroadcastReceiver();
 				draw();
-			} else {
-				mIsScreenOn = false;
-				unregisterTimeBroadcastReceiver();
 			}
 		}
 
