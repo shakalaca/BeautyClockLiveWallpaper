@@ -2,12 +2,11 @@ package com.corner23.android.beautyclocklivewallpaper;
 
 import java.io.File;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
-public class Settings extends PreferenceActivity
-    implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class Settings extends PreferenceActivity {
 
 	public static final String SHARED_PREFS_NAME = "bclw_settings";
 	
@@ -17,6 +16,7 @@ public class Settings extends PreferenceActivity
     public static final String PREF_FIT_SCREEN = "fit_screen";
     public static final String PREF_FETCH_LARGER_PICTURE = "fetch_larger_picture";
     public static final String PREF_PICTURE_SOURCE = "picture_source";
+    public static final String PREF_INTERNAL_PICTURE_PATH = "picture_path";
     
     @Override
     protected void onCreate(Bundle icicle) {
@@ -28,23 +28,6 @@ public class Settings extends PreferenceActivity
 		} else {
 	        addPreferencesFromResource(R.xml.preferences);
 		}
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(
-                this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(
-                this);
-        super.onDestroy();
-    }
-
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-            String key) {
+		this.startService(new Intent(this, UpdateService.class));
     }
 }

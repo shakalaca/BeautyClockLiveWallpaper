@@ -8,6 +8,10 @@ Just for fun, any questions feel free contact me :-)
 
 E-mail: shakalaca AT gmail dot com
 
+2010-07-28 v2.0:
+* Rewrite the whole engine
+* Prefetch fix number of pictures and save them in cache area
+
 2010-07-21 v1.5:
 * Use broadcast receiver instead of polling
 
