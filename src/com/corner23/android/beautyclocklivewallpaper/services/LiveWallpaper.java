@@ -40,7 +40,7 @@ public class LiveWallpaper extends WallpaperService {
 		private String mStorePath = null;
 
 		private boolean mRegScreenBR = false;
-		private boolean mRegTimeBR = false;
+		private boolean mRegUpdateBR = false;
 		private boolean mIsEngineVisible = false;
 		private boolean bIsLarge = false;
 		
@@ -58,21 +58,12 @@ public class LiveWallpaper extends WallpaperService {
 	        	if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
 	                // Log.v(TAG, "Intent.ACTION_SCREEN_ON"); 
 	                if (mIsEngineVisible) {
-						registerTimeBroadcastReceiver();
+	                	registerWallpaperUpdateBroadcastReceiver();
 	                }
 		    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 		            // Log.v(TAG, "Intent.ACTION_SCREEN_OFF"); 
-					unregisterTimeBroadcastReceiver();
+		    		unregisterWallpaperUpdateBroadcastReceiver();
 		    	}
-			}
-		};
-		
-		private final BroadcastReceiver mTimeBroadcastReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Log.w(TAG, "mTimeBroadcastReceiver:onReceive");
-				updateBitmap();
-				draw();
 			}
 		};
 		
@@ -86,21 +77,19 @@ public class LiveWallpaper extends WallpaperService {
 			}
 		};
 		
-		private void registerTimeBroadcastReceiver() {
-			if (!mRegTimeBR) {
+		private void registerWallpaperUpdateBroadcastReceiver() {
+			if (!mRegUpdateBR) {
 				IntentFilter filter = new IntentFilter();  
-				filter.addAction(Intent.ACTION_TIME_TICK);  
-				filter.addAction(Intent.ACTION_TIME_CHANGED);  
-				filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
-				registerReceiver(mTimeBroadcastReceiver, filter);
-				mRegTimeBR = true;
+		    	filter.addAction(UpdateService.BROADCAST_WALLPAPER_UPDATE);
+		    	registerReceiver(mWallpaperUpdateBroadcastReceiver, filter);
+				mRegUpdateBR = true;
 			}
 		}
 		
-		private void unregisterTimeBroadcastReceiver() {
-			if (mRegTimeBR) {
-				unregisterReceiver(mTimeBroadcastReceiver);
-				mRegTimeBR = false;
+		private void unregisterWallpaperUpdateBroadcastReceiver() {
+			if (mRegUpdateBR) {
+				unregisterReceiver(mWallpaperUpdateBroadcastReceiver);
+				mRegUpdateBR = false;
 			}
 		}
 		
@@ -128,6 +117,8 @@ public class LiveWallpaper extends WallpaperService {
 	    	mPrefs = getSharedPreferences(Settings.SHARED_PREFS_NAME, 0);
 	    	mPrefs.registerOnSharedPreferenceChangeListener(this);
 	    	onSharedPreferenceChanged(mPrefs, null);
+	    	
+			startService(new Intent(LiveWallpaper.this, UpdateService.class));
 		}
 
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -225,12 +216,8 @@ public class LiveWallpaper extends WallpaperService {
 
 			setTouchEventsEnabled(false);
 	    	
-	    	IntentFilter filter = new IntentFilter();
-	    	filter.addAction(UpdateService.BROADCAST_WALLPAPER_UPDATE);
-	    	registerReceiver(mWallpaperUpdateBroadcastReceiver, filter);
-	    	
 			// register notification
-			registerTimeBroadcastReceiver();
+	    	registerWallpaperUpdateBroadcastReceiver();
 			registerScreenBroadcastReceiver();		
 		}
 
@@ -239,9 +226,7 @@ public class LiveWallpaper extends WallpaperService {
 			// Log.d(TAG, "onDestroy (engine)");
 			super.onDestroy();
 
-            unregisterReceiver(mWallpaperUpdateBroadcastReceiver);
-            
-    		unregisterTimeBroadcastReceiver();
+            unregisterWallpaperUpdateBroadcastReceiver();
     		unregisterScreenBroadcastReceiver();
 		}
 
@@ -274,10 +259,10 @@ public class LiveWallpaper extends WallpaperService {
 			if (visible) {
 				draw();
 				mIsEngineVisible = true;
-				registerTimeBroadcastReceiver();
+				registerWallpaperUpdateBroadcastReceiver();
 			} else {
 				mIsEngineVisible = false;
-				unregisterTimeBroadcastReceiver();
+				unregisterWallpaperUpdateBroadcastReceiver();
 			}
 		}
 		

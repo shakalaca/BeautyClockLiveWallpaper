@@ -153,6 +153,10 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 			if (mTime.hour == mHourNextTime && mTime.minute == mMinuteNextTime) {
 				UpdatePictures(false);
 			}
+			
+			Log.d(TAG, "Broadcast Wallpaper update !!");
+			Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
+			sendBroadcast(i);
 		}
 	};
 	
