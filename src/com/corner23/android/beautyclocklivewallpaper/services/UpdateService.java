@@ -68,7 +68,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 	}
 
 	private void startToFetchBeautyPictureTask() {
-		Log.d(TAG, "startToFetchBeautyPictureTask");
+		Log.i(TAG, "startToFetchBeautyPictureTask");
 		try {
 			cancelFetchBeautyPictureTask();
 			mFetchBeautyPictureTask = new FetchBeautyPictureTask(this, cm, mPictureSource, mFetchLargerPicture, mSaveCopy);
@@ -116,15 +116,15 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 	private final BroadcastReceiver mScreenBroadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.w(TAG, "mScreenBroadcastReceiver:onReceive");
+			Log.i(TAG, "mScreenBroadcastReceiver:onReceive");
         	if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                // Log.v(TAG, "Intent.ACTION_SCREEN_ON"); 
+                // Log.i(TAG, "Intent.ACTION_SCREEN_ON"); 
 				registerTimeBroadcastReceiver();
 				if (!mFetchWhenScreenOff) {
 					UpdatePictures(false);
 				}
 	    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-	            // Log.v(TAG, "Intent.ACTION_SCREEN_OFF"); 
+	            // Log.i(TAG, "Intent.ACTION_SCREEN_OFF"); 
 				if (!mFetchWhenScreenOff) {
 					unregisterTimeBroadcastReceiver();
 				}
@@ -135,7 +135,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 	private final BroadcastReceiver mTimeBroadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.w(TAG, "mTimeBroadcastReceiver:onReceive");
+			Log.i(TAG, "mTimeBroadcastReceiver:onReceive");
 			if (intent.getAction().equals(Intent.ACTION_TIMEZONE_CHANGED)) {
 				String tz = intent.getStringExtra("time-zone");
 				mTime = new Time(TimeZone.getTimeZone(tz).getID());
@@ -241,8 +241,6 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 
 	@Override
 	public void onStart(Intent intent, int startId) {
-		Log.i(TAG, "onStart");
-		
 		onStartCommand(intent, 0, startId);
 	}
 	
@@ -270,12 +268,13 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 				
 				Log.d(TAG, "Count:" + mCurrentCount);
 				if (timeout && mTimeOutCount++ < MAX_TIMEOUT_COUNT) {
-					Log.w(TAG, "timeout, startToFetchBeautyPicture again");					
+					Log.i(TAG, "timeout, startToFetchBeautyPicture again");					
 				} else {
 					if (!success) {
-						Log.w(TAG, "failed !!");
+						Log.e(TAG, "failed !!");
 					} else {
 						if (mCurrentCount == 0) {
+							Log.d(TAG, "Broadcast Wallpaper update !!");
 							Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
 							sendBroadcast(i);
 						}					

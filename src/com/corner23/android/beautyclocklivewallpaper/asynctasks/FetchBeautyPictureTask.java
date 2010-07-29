@@ -161,6 +161,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 	
 	private boolean saveBitmapToFile(Bitmap bitmap, File new_file) {
 		if (bitmap == null || new_file == null) {
+			Log.e(TAG, "Null parameters in saveBitmapToFile");
 			return false;
 		}
 		
@@ -170,7 +171,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 			out.flush();
 			out.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, "Error saving bitmap to file: " + e.getMessage());
 			return false;
 		}
 		
@@ -188,14 +189,14 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 			if (cm != null) {
 				// network is turned off by user
 				if (!cm.getBackgroundDataSetting()) {
-					Log.d(TAG, "background transfer disabled..");
+					Log.i(TAG, "background transfer disabled..");
 					return null;
 				}
 				
 				// network is not connected
 				NetworkInfo ni = cm.getActiveNetworkInfo();
 				if (ni != null && ni.getState() != NetworkInfo.State.CONNECTED) {
-					Log.d(TAG, "network down");
+					Log.i(TAG, "network down");
 					return null;
 				}
 				
@@ -214,6 +215,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 				}
 			}
 		} catch (Exception e) {
+			Log.e(TAG, "Error setting network env: " + e.getMessage());
 		}
 		
 		try {
@@ -264,7 +266,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 
 	@Override
 	protected Integer doInBackground(Integer... params) {
-		Log.w(TAG, "doInBackground:FetchBeautyPictureTask");
+		Log.i(TAG, "doInBackground:FetchBeautyPictureTask");
 		int ret = BCLW_FETCH_STATE_OTHER_FAILED;
 		
 		mHour = params[0];
@@ -317,16 +319,16 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 	}
 	
 	protected void onPostExecute(Integer ret) {
-		Log.w(TAG, "onPostExecute:FetchBeautyPictureTask");
+		Log.i(TAG, "onPostExecute:FetchBeautyPictureTask");
 		if (bCancel) {
-			Log.d(TAG, "Canceled.. ");
+			Log.i(TAG, "Canceled.. ");
 			return;
 		}
 		Intent intent = new Intent(mContext, UpdateService.class);
 		intent.putExtra("fetch_pictures_ret", true);
 		
 		if (ret == BCLW_FETCH_STATE_TIMEOUT) {
-			Log.w(TAG, "timeout, startToFetchBeautyPicture again");
+			Log.i(TAG, "timeout, startToFetchBeautyPicture again");
 			intent.putExtra("timeout", true);
 		} else if (ret == BCLW_FETCH_STATE_SUCCESS) {
 			intent.putExtra("fetch_success", true);
