@@ -172,7 +172,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 		
 		if (!bRefreshSource) {
 			long diff = mNextTimeInMillis - TimeInMillis;
-			if (diff > mPicturesPerFetch * /*0.5 **/ 60 * 1000) { // too early
+			if (diff > mPicturesPerFetch * 0.5 * 60 * 1000) { // too early
 				Log.i(TAG, "Too early to refresh");
 				return;
 			}
