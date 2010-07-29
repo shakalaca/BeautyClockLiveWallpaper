@@ -48,7 +48,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 	private boolean mFetchWhenScreenOff = true;
 	private boolean mFetchLargerPicture = true;
 	private boolean mSaveCopy = false;
-	private int mPicturesPerFetch = 20;
+	private int mPicturesPerFetch = 30;
 
 	// network
 	private ConnectivityManager cm = null;
@@ -202,6 +202,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 		mSaveCopy = prefs.getBoolean(Settings.PREF_SAVE_COPY, false);
 		mFetchLargerPicture = prefs.getBoolean(Settings.PREF_FETCH_LARGER_PICTURE, true);
 		mPictureSource = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_SOURCE, "0"));
+		mPicturesPerFetch = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_PER_FETCH, "30"));
 	}
 	
 	private void registerTimeBroadcastReceiver() {
@@ -371,6 +372,9 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 			UpdatePictures(true);
 		} else if (key.equals(Settings.PREF_PICTURE_SOURCE)) {
 			mPictureSource = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_SOURCE, "0"));
+			UpdatePictures(true);
+		} else if (key.equals(Settings.PREF_PICTURE_PER_FETCH)) {
+			mPicturesPerFetch = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_PER_FETCH, "30"));
 			UpdatePictures(true);
 		}
 	}
