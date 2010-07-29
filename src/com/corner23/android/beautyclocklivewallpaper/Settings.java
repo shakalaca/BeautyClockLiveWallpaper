@@ -2,9 +2,6 @@ package com.corner23.android.beautyclocklivewallpaper;
 
 import java.io.File;
 
-import com.corner23.android.beautyclocklivewallpaper.services.UpdateService;
-
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
@@ -31,6 +28,5 @@ public class Settings extends PreferenceActivity {
 		} else {
 	        addPreferencesFromResource(R.xml.preferences);
 		}
-		this.startService(new Intent(this, UpdateService.class));
     }
 }
