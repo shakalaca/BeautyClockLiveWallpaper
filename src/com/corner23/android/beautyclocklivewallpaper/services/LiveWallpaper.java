@@ -1,6 +1,8 @@
-package com.corner23.android.beautyclocklivewallpaper;
+package com.corner23.android.beautyclocklivewallpaper.services;
 
 import java.io.File;
+
+import com.corner23.android.beautyclocklivewallpaper.Settings;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

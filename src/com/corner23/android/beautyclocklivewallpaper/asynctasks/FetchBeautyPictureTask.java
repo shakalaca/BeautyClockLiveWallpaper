@@ -18,7 +18,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import com.corner23.android.beautyclocklivewallpaper.Settings;
-import com.corner23.android.beautyclocklivewallpaper.UpdateService;
+import com.corner23.android.beautyclocklivewallpaper.services.UpdateService;
 
 import android.content.Context;
 import android.content.Intent;

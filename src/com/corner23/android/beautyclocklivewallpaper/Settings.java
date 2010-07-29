@@ -2,6 +2,8 @@ package com.corner23.android.beautyclocklivewallpaper;
 
 import java.io.File;
 
+import com.corner23.android.beautyclocklivewallpaper.services.UpdateService;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

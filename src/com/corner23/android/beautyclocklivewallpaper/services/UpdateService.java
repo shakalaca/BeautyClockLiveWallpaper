@@ -1,10 +1,11 @@
-package com.corner23.android.beautyclocklivewallpaper;
+package com.corner23.android.beautyclocklivewallpaper.services;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.TimeZone;
 import java.util.concurrent.RejectedExecutionException;
 
+import com.corner23.android.beautyclocklivewallpaper.Settings;
 import com.corner23.android.beautyclocklivewallpaper.asynctasks.CacheCleanUpTask;
 import com.corner23.android.beautyclocklivewallpaper.asynctasks.FetchBeautyPictureTask;
 import com.corner23.android.beautyclocklivewallpaper.asynctasks.PlayBellTask;

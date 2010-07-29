@@ -2,7 +2,7 @@ package com.corner23.android.beautyclocklivewallpaper.asynctasks;
 
 import java.io.File;
 
-import com.corner23.android.beautyclocklivewallpaper.UpdateService;
+import com.corner23.android.beautyclocklivewallpaper.services.UpdateService;
 
 import android.content.Context;
 import android.content.Intent;
