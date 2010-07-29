@@ -6,6 +6,11 @@
     <uses-sdk android:minSdkVersion="7" />
     
     <application android:icon="@drawable/icon" android:label="@string/app_name">
+		<receiver android:name=".BootReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+			</intent-filter>
+		</receiver>
         <service 
             android:label="@string/app_name"
             android:name=".services.LiveWallpaper"
@@ -30,8 +35,8 @@
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-<uses-permission android:name="android.permission.SET_WALLPAPER" />
+	<uses-permission android:name="android.permission.SET_WALLPAPER" />
 	<uses-permission android:name="android.permission.SET_WALLPAPER_HINTS" />
-
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	
 </manifest> 
