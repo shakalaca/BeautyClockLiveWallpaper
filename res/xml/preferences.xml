@@ -1,6 +1,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<ListPreference android:key="picture_source"
+	<PreferenceCategory android:title="@string/bc_dead_live_wallpaper_section_text">
+		<CheckBoxPreference android:key="bcdw_enable" 
+			android:title="@string/bc_enable_deadwallpaper_title_text"
+			android:summary="@string/bc_enable_deadwallpaper_summary_text"
+			android:defaultValue="false" />		
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="@string/bc_general_section_text">
+		<ListPreference android:key="picture_source"
 		android:layout="?android:attr/preferenceLayoutChild"
 		android:title="@string/bc_choose_picture_source_text"
 		android:entries="@array/bc_picture_source_entries"
@@ -8,11 +16,6 @@
 		android:dialogTitle="@string/bc_choose_picture_source_text"
 		android:defaultValue="0" />
 
-	<CheckBoxPreference android:key="fetch_screen_off" 
-		android:title="@string/bc_fetch_when_screen_off_title_text"
-		android:summary="@string/bc_fetch_when_screen_off_summary_text"
-		android:defaultValue="true" />
-		
 	<CheckBoxPreference android:key="fetch_larger_picture" 
 		android:title="@string/bc_fetch_larger_picture_title_text"
 		android:summary="@string/bc_fetch_larger_picture_summary_text"
@@ -23,9 +26,23 @@
 		android:summary="@string/bc_fit_screen_summary_text"
 		android:defaultValue="false" />
 
-	<CheckBoxPreference android:key="ring_hourly" 
-		android:title="@string/bc_ring_on_hour_title_text"
-		android:summary="@string/bc_ring_on_hour_summary_text"
-		android:defaultValue="false" />
+</PreferenceCategory>
 
+	<PreferenceCategory android:title="@string/bc_network_section_text">
+		<ListPreference android:key="picture_per_fetch"
+			android:layout="?android:attr/preferenceLayoutChild"
+			android:title="@string/bc_bg_fetch_frequency_title_text"
+			android:summary="@string/bc_bg_fetch_frequency_summary_text"
+			android:entries="@array/bc_fetch_frequency_entries"
+			android:entryValues="@array/bc_fetch_frequency_entry_values"
+			android:dialogTitle="@string/bc_bg_fetch_frequency_title_text"
+			android:defaultValue="30" />
+
+	<CheckBoxPreference android:key="fetch_screen_off" 
+		android:title="@string/bc_fetch_when_screen_off_title_text"
+		android:summary="@string/bc_fetch_when_screen_off_summary_text"
+		android:defaultValue="true" />
+
+</PreferenceCategory>
+	
 </PreferenceScreen>
