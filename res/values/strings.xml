@@ -5,12 +5,12 @@
 	<string name="bc_main_help_text">This is a widget, \n\n<b>To use it:</b> \n1. Press menu key in home screen \n2. Select Add \n3. Select widgets \n4. Choose Beauty Clock.\n\n<b>To setup widget:</b>\npress menu key here.\n\n<b>To bell on every hour:</b>\n1. Enable this feature in settings.\n2. Create BeautyClock\\bell directory in your sdcard. \n3. Put bell00.mp3 ~ bell23.mp3 in that directory.\n\n<b>To use your own tokei:</b>\n1. Create BeautyClock\\pic\\custom directory in your sdcard.\n2. Put hhmm.jpg under that directory. (hh = 00 ~ 23 and mm = 00 ~ 59, which presents every minute.)</string>
 	<string name="bc_settings_menu_text">Beauty Clock Settings</string>
 	
-	<string name="bc_choose_picture_source_text">Choose image source</string>
-	<string name="bc_ring_on_hour_title_text">Ring on every hour</string>
-	<string name="bc_ring_on_hour_summary_text">Be sure you have the bells</string>
+	<string name="bc_dead_live_wallpaper_section_text">For devices not supporting live wallpaper</string>
+	<string name="bc_enable_deadwallpaper_title_text">Enable Dead Wallpaper</string>
+	<string name="bc_enable_deadwallpaper_summary_text">DO NOT use if device supports live wallpaper</string>
 
-	<string name="bc_fetch_when_screen_off_title_text">Fetch picture when screen is off</string>
-	<string name="bc_fetch_when_screen_off_summary_text">This will reduce your battery time</string>
+	<string name="bc_general_section_text">General settings</string>
+	<string name="bc_choose_picture_source_text">Choose image source</string>
 	
 	<string name="bc_fetch_larger_picture_title_text">Use larger picture</string>
 	<string name="bc_fetch_larger_picture_summary_text">If web site provides</string>
@@ -18,8 +18,19 @@
 	<string name="bc_fit_screen_title_text">Fit the screen</string>
 	<string name="bc_fit_screen_summary_text">Scale the picture to full screen</string>
 	
+	<string name="bc_network_section_text">Network settings</string>
+	<string name="bc_bg_fetch_frequency_title_text">Background fetch frequency</string>
+	<string name="bc_bg_fetch_frequency_summary_text">Interval between network connection</string>
+	
+	<string name="bc_fetch_when_screen_off_title_text">Fetch picture when screen is off</string>
+	<string name="bc_fetch_when_screen_off_summary_text">This will reduce your battery time</string>
+
+	<string name="bc_advance_section_text">Advance settings</string>	
 	<string name="bc_save_picture_title_text">Save picture</string>
 	<string name="bc_save_picture_summary_text">Save a copy in the SD card</string>
+	
+	<string name="bc_ring_on_hour_title_text">Ring on every hour</string>
+	<string name="bc_ring_on_hour_summary_text">Be sure you have the bells</string>
 	
 	<string-array name="bc_picture_source_entries_secret">
 		<item>Arthur</item>
@@ -61,4 +72,23 @@
 		<item>9</item>	
 		<item>10</item>	
 	</string-array>
+	
+	<string-array name="bc_fetch_frequency_entries">
+		<item>10 minutes</item>
+		<item>20 minutes</item>
+		<item>30 minutes</item>	
+		<item>40 minutes</item>	
+		<item>50 minutes</item>	
+		<item>1 hour</item>	
+	</string-array>
+
+	<string-array name="bc_fetch_frequency_entry_values">
+		<item>15</item>
+		<item>30</item>
+		<item>45</item>
+		<item>60</item>
+		<item>75</item>	
+		<item>90</item>	
+	</string-array>
+
 </resources>
