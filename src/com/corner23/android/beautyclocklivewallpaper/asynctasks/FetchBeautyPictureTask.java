@@ -278,6 +278,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 			File _file_sdcard = new File(_path_sdcard);
 			if (_file_sdcard.exists()) {
 				Log.d(TAG, "File in SD card:" + _path_sdcard);
+				Thread.sleep(1000);
 				return BCLW_FETCH_STATE_SUCCESS;
 			}
 
@@ -286,6 +287,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 			File _file_cache = new File(mContext.getCacheDir(), _path_cache);
 			if (_file_cache.exists()) {
 				Log.d(TAG, "File in cache");
+				Thread.sleep(1000);
 				return BCLW_FETCH_STATE_SUCCESS;
 			}
 			
@@ -314,6 +316,8 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 					ret = BCLW_FETCH_STATE_TIMEOUT;
 				}
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		return ret;
 	}
