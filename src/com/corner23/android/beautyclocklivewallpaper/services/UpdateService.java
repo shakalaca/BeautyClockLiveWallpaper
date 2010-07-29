@@ -56,7 +56,6 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 	private boolean mRegScreenBR = false;
 	private boolean mRegTimeBR = false;
 	private boolean mStarted = false;
-	private boolean mFullUpdateDone = false;	
 	private int mCurrentCount = 0;
 	private int mTimeOutCount = 0;
 
@@ -167,7 +166,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 		mTime.setToNow();
 		long TimeInMillis = mTime.toMillis(false);
 		
-		if (mFullUpdateDone && !bRefreshSource) {
+		if (!bRefreshSource) {
 			long diff = mNextTimeInMillis - TimeInMillis;
 			if (diff > mPicturesPerFetch * /*0.5 **/ 60 * 1000) { // too early
 				Log.i(TAG, "Too early to refresh");
@@ -297,7 +296,6 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 					startToFetchBeautyPictureTask();
 				} else {
 					mCurrentCount = 0;
-					mFullUpdateDone = true;
 				}
 			}
 		}
