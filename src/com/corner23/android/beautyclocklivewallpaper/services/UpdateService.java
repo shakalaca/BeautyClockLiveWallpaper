@@ -121,10 +121,6 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 				registerTimeBroadcastReceiver();
 				if (!mFetchWhenScreenOff) {
 					UpdatePictures(false);
-					
-					Log.d(TAG, "Broadcast Wallpaper update !!");
-					Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
-					sendBroadcast(i);
 				}
 	    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 	            // Log.i(TAG, "Intent.ACTION_SCREEN_OFF"); 
@@ -143,10 +139,6 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 				String tz = intent.getStringExtra("time-zone");
 				mTime = new Time(TimeZone.getTimeZone(tz).getID());
 				UpdatePictures(true);
-				
-				Log.d(TAG, "Broadcast Wallpaper update !!");
-				Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
-				sendBroadcast(i);
 				return;
 			}
 			
@@ -160,17 +152,22 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 			
 			if (mTime.hour == mHourNextTime && mTime.minute == mMinuteNextTime) {
 				UpdatePictures(false);
+			} else {
+				broadcastUpdate();				
 			}
-			
-			Log.d(TAG, "Broadcast Wallpaper update !!");
-			Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
-			sendBroadcast(i);
 		}
 	};
+	
+	private void broadcastUpdate() {
+		Log.d(TAG, "Broadcast Wallpaper update !!");
+		Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
+		sendBroadcast(i);
+	}
 	
 	private void UpdatePictures(boolean bRefreshSource) {			
 		// don't update on custom files..
 		if (mPictureSource == 9) {
+			broadcastUpdate();				
 			return;
 		}
 		
@@ -182,6 +179,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 			long diff = mNextTimeInMillis - TimeInMillis;
 			if (diff > mPicturesPerFetch * 0.5 * 60 * 1000) { // too early
 				Log.i(TAG, "Too early to refresh");
+				broadcastUpdate();				
 				return;
 			}
 		}
@@ -201,6 +199,8 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 
 		cancelCleanUpCacheTask();
 		startToCleanUpCache(hour, minute, bRefreshSource);
+		
+		broadcastUpdate();				
 	}
 
 	private void readDefaultPrefs(SharedPreferences prefs) {
