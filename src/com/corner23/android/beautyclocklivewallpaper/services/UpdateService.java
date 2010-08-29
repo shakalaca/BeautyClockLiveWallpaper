@@ -286,9 +286,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 						Log.e(TAG, "failed !!");
 					} else {
 						if (mCurrentCount == 0) {
-							Log.d(TAG, "Broadcast Wallpaper update !!");
-							Intent i = new Intent(BROADCAST_WALLPAPER_UPDATE);
-							sendBroadcast(i);
+							broadcastUpdate();
 						}					
 					}
 					mTimeOutCount = 0;
