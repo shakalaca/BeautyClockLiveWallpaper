@@ -257,6 +257,7 @@ public class LiveWallpaper extends WallpaperService {
 		public void onVisibilityChanged(boolean visible) {
 			Log.d(TAG, "onVisibilityChanged:" + visible);
 			if (visible) {
+				updateBitmap();
 				draw();
 				mIsEngineVisible = true;
 				registerWallpaperUpdateBroadcastReceiver();
