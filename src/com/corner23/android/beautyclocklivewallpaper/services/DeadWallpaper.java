@@ -59,6 +59,17 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		File _f_sdcard = new File(fname);
 		if (!_f_sdcard.exists()) {
 			fname = String.format("%s/%02d%02d.jpg", getCacheDir().getAbsolutePath(), hour, minute);
+
+			File _f_cache = new File(fname);
+			if (!_f_cache.exists()) {
+				Intent intent = new Intent(DeadWallpaper.this, UpdateService.class);
+				intent.putExtra("fetch_pictures", true);
+				intent.putExtra("hour", hour);
+				intent.putExtra("minute", minute);
+				startService(intent);
+				
+				return;
+			}
 		}
 		
 		mBeautyBitmap = BitmapFactory.decodeFile(fname);

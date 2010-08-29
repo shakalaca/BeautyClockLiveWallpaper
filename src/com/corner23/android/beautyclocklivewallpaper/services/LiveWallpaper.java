@@ -291,7 +291,18 @@ public class LiveWallpaper extends WallpaperService {
 			if (!_f_sdcard.exists()) {
 				fname = String.format("%s/%02d%02d.jpg", getCacheDir().getAbsolutePath(), mHour, mMinute);
 				Log.d(TAG, "check cache:" + fname);
-			}
+				
+				File _f_cache = new File(fname);
+				if (!_f_cache.exists()) {
+					Intent intent = new Intent(LiveWallpaper.this, UpdateService.class);
+					intent.putExtra("fetch_pictures", true);
+					intent.putExtra("hour", mHour);
+					intent.putExtra("minute", mMinute);
+					startService(intent);
+					
+					return;
+				}
+ 			}
 			
 			Bitmap bitmap = BitmapFactory.decodeFile(fname);
 			if (bitmap != null) {
