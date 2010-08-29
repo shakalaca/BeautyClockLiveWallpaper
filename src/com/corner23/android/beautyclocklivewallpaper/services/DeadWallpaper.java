@@ -32,6 +32,8 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 	private int mScreenWidth = 0;
 	private SharedPreferences mPrefs;
 	private WallpaperManager wm = null;
+	private int OrigWallpaperWidth = 0;
+	private int OrigWallpaperHeight = 0;
 	
 	private Bitmap mBeautyBitmap = null;
 	private int mBitmapHeight = 0;
@@ -142,6 +144,9 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
     	onSharedPreferenceChanged(mPrefs, null);
 
 		wm = WallpaperManager.getInstance(this);
+		OrigWallpaperWidth = wm.getDesiredMinimumWidth();
+		OrigWallpaperHeight = wm.getDesiredMinimumHeight();
+		Log.d(TAG, OrigWallpaperWidth + "x" + OrigWallpaperHeight);
 		
 		startService(new Intent(DeadWallpaper.this, UpdateService.class));
 	}
@@ -167,6 +172,13 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 				updateBeautyBitmap();
 				setWallpaper();
 			} else {
+				try {
+					wm.suggestDesiredDimensions(OrigWallpaperWidth, OrigWallpaperHeight);
+					wm.clear();
+					Log.d(TAG, OrigWallpaperWidth + "x" + OrigWallpaperHeight);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				this.stopSelf();
 			}
 		}
