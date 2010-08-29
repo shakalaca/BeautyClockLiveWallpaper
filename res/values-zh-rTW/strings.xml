@@ -5,9 +5,9 @@
 	<string name="bc_main_help_text">這是個桌面工具, \n\n<b>使用方法:</b> \n1. 在主畫面按 menu 鍵 \n2. 選擇新增 \n3. 選擇小工具 \n4. 選擇美人時計瀏覽器.\n\n<b>設定方法:</b>\n在這畫面按 menu 鍵或在主畫面點選本小工具.\n\n<b>設定準點報時:</b>\n1. 在設定中將這功能開啟.\n2. 在 SD 卡下建立 BeautyClock\\bell 目錄. \n3. 將檔案 bell00.mp3 ~ bell23.mp3 放到前述目錄底下.\n\n<b>使用自訂的圖片來源:</b>\n1. 在 SD 卡下建立 BeautyClock\\pic\\custom 這個目錄.\n2. 將 hhmm.jpg 放進去. (hh = 00 ~ 23 and mm = 00 ~ 59, 代表每分鐘的圖.)</string>
 	<string name="bc_settings_menu_text">美人時計設定</string>
 	
-	<string name="bc_dead_live_wallpaper_section_text">給那些沒有活桌布的裝置</string>
-	<string name="bc_enable_deadwallpaper_title_text">啟用死桌布</string>
-	<string name="bc_enable_deadwallpaper_summary_text">如果你的裝置有支持活桌布, 別用</string>
+	<string name="bc_dead_live_wallpaper_section_text">給那些沒有動態桌布的裝置</string>
+	<string name="bc_enable_deadwallpaper_title_text">啟用擬動態桌布</string>
+	<string name="bc_enable_deadwallpaper_summary_text">模擬動態桌布, 如果你的裝置有支持動態桌布, 別用</string>
 	
 	<string name="bc_general_section_text">一般設定</string>
 	<string name="bc_choose_picture_source_text">選擇圖片來源</string>

@@ -7,7 +7,7 @@
 	
 	<string name="bc_dead_live_wallpaper_section_text">For devices not supporting live wallpaper</string>
 	<string name="bc_enable_deadwallpaper_title_text">Enable Dead Wallpaper</string>
-	<string name="bc_enable_deadwallpaper_summary_text">DO NOT use if device supports live wallpaper</string>
+	<string name="bc_enable_deadwallpaper_summary_text">Imitated Live Wallpaper. DO NOT use if device supports live wallpaper</string>
 
 	<string name="bc_general_section_text">General settings</string>
 	<string name="bc_choose_picture_source_text">Choose image source</string>
