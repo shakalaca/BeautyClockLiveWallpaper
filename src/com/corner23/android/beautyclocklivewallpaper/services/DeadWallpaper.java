@@ -2,8 +2,11 @@ package com.corner23.android.beautyclocklivewallpaper.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.TimeZone;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.corner23.android.beautyclocklivewallpaper.Settings;
+import com.corner23.android.beautyclocklivewallpaper.asynctasks.PlayBellTask;
 
 import android.app.Service;
 import android.app.WallpaperManager;
@@ -14,6 +17,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.text.format.Time;
 import android.util.Log;
@@ -27,6 +31,7 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 	// preferences
 	private boolean mFitScreen = false;
 	private String mStorePath = null;
+	private boolean mBellHourly = false;
 
 	private int mScreenHeight = 0;
 	private int mScreenWidth = 0;
@@ -38,7 +43,13 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 	private Bitmap mBeautyBitmap = null;
 	private int mBitmapHeight = 0;
 	private int mBitmapWidth = 0;
-	
+
+	private boolean mRegScreenBR = false;
+	private boolean mRegTimeBR = false;
+	private boolean mRegUpdateBR = false;
+
+	private PlayBellTask mPlayBellTask = null;
+
 	private final BroadcastReceiver mWallpaperUpdateBroadcastReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -48,6 +59,132 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 			setWallpaper();
 		}
 	};
+	
+	private final BroadcastReceiver mScreenBroadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.i(TAG, "mScreenBroadcastReceiver:onReceive");
+        	if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                // Log.i(TAG, "Intent.ACTION_SCREEN_ON"); 
+				registerTimeBroadcastReceiver();
+        		registerWallpaperUpdateBroadcastReceiver();
+				
+				updateBeautyBitmap();
+				setWallpaper();
+	    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+	            // Log.i(TAG, "Intent.ACTION_SCREEN_OFF"); 
+	    		unregisterWallpaperUpdateBroadcastReceiver();
+				unregisterTimeBroadcastReceiver();
+	    	}
+		}
+	};
+
+	private final BroadcastReceiver mTimeBroadcastReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.i(TAG, "mTimeBroadcastReceiver:onReceive");
+			
+			if (intent.getAction().equals(Intent.ACTION_TIMEZONE_CHANGED)) {
+				String tz = intent.getStringExtra("time-zone");
+				mTime = new Time(TimeZone.getTimeZone(tz).getID());
+				
+				startUpdateService();
+			} else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
+				startUpdateService();
+			} else {
+				// normal tick, get time
+				mTime.setToNow();
+				
+				if (mTime.minute == 0 && mBellHourly) {
+					cancelPlayBellTask();
+					startToPlayBell(mTime.hour);
+				}
+				
+				updateBeautyBitmap();
+				setWallpaper();
+			}
+		}
+	};
+	
+	private void registerWallpaperUpdateBroadcastReceiver() {
+		if (!mRegUpdateBR) {
+	    	IntentFilter filter = new IntentFilter();
+	    	filter.addAction(UpdateService.BROADCAST_WALLPAPER_UPDATE);
+	    	registerReceiver(mWallpaperUpdateBroadcastReceiver, filter);
+	    	mRegUpdateBR = true;
+		}
+	}
+	
+	private void unregisterWallpaperUpdateBroadcastReceiver() {
+		if (mRegUpdateBR) {
+			this.unregisterReceiver(mWallpaperUpdateBroadcastReceiver);
+			mRegUpdateBR = false;
+		}
+	}
+	
+	private void registerScreenBroadcastReceiver() {
+		if (!mRegScreenBR) {
+			IntentFilter filter = new IntentFilter();  
+			filter.addAction(Intent.ACTION_SCREEN_ON);
+			filter.addAction(Intent.ACTION_SCREEN_OFF);
+			this.registerReceiver(mScreenBroadcastReceiver, filter);
+			mRegScreenBR = true;
+		}
+	}
+	
+	private void unregisterScreenBroadcastReceiver() {
+		if (mRegScreenBR) {
+			this.unregisterReceiver(mScreenBroadcastReceiver);
+			mRegScreenBR = false;
+		}
+	}
+
+	private void registerTimeBroadcastReceiver() {
+		if (!mRegTimeBR) {
+			IntentFilter filter = new IntentFilter();  
+			filter.addAction(Intent.ACTION_TIME_TICK);  
+			filter.addAction(Intent.ACTION_TIME_CHANGED);  
+			filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+			this.registerReceiver(mTimeBroadcastReceiver, filter);
+			mRegTimeBR = true;
+		}
+	}
+	
+	private void unregisterTimeBroadcastReceiver() {
+		if (mRegTimeBR) {
+			this.unregisterReceiver(mTimeBroadcastReceiver);
+			mRegTimeBR = false;
+		}
+	}
+	
+	private void cancelPlayBellTask() {
+		if (mPlayBellTask != null &&
+			mPlayBellTask.getStatus() == AsyncTask.Status.RUNNING) {
+			mPlayBellTask.cancel(true);
+		}
+	}
+	
+	private void startToPlayBell(int hour) {
+		try {
+			mPlayBellTask = new PlayBellTask(this);
+			mPlayBellTask.execute(hour);
+		} catch(RejectedExecutionException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void startUpdateService() {
+		Intent intent = new Intent(DeadWallpaper.this, UpdateService.class);
+		startService(intent);		
+	}
+	
+	private void startUpdateServiceWithTime(int hour, int minute) {
+		Intent intent = new Intent(DeadWallpaper.this, UpdateService.class);
+		intent.putExtra("fetch_pictures", true);
+		intent.putExtra("hour", hour);
+		intent.putExtra("minute", minute);
+		startService(intent);		
+	}
 	
 	private void updateBeautyBitmap() {
 		mTime.setToNow();		
@@ -62,12 +199,7 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 
 			File _f_cache = new File(fname);
 			if (!_f_cache.exists()) {
-				Intent intent = new Intent(DeadWallpaper.this, UpdateService.class);
-				intent.putExtra("fetch_pictures", true);
-				intent.putExtra("hour", hour);
-				intent.putExtra("minute", minute);
-				startService(intent);
-				
+				startUpdateServiceWithTime(hour, minute);
 				return;
 			}
 		}
@@ -143,10 +275,10 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		super.onCreate();
 		
 		// register notification
-    	IntentFilter filter = new IntentFilter();
-    	filter.addAction(UpdateService.BROADCAST_WALLPAPER_UPDATE);
-    	registerReceiver(mWallpaperUpdateBroadcastReceiver, filter);
-
+		registerWallpaperUpdateBroadcastReceiver();
+		registerTimeBroadcastReceiver();
+		registerScreenBroadcastReceiver();
+		
 		mScreenHeight = getResources().getDisplayMetrics().heightPixels;
 		mScreenWidth = getResources().getDisplayMetrics().widthPixels;
 		
@@ -162,9 +294,13 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		startService(new Intent(DeadWallpaper.this, UpdateService.class));
 	}
 
-	public void onDestroy() {		
-        unregisterReceiver(mWallpaperUpdateBroadcastReceiver);
+	public void onDestroy() {	
+		cancelPlayBellTask();
 
+		unregisterWallpaperUpdateBroadcastReceiver();
+		unregisterTimeBroadcastReceiver();
+		unregisterScreenBroadcastReceiver();
+		
 		super.onDestroy();
 	}
 	
@@ -219,6 +355,13 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 			setWallpaper();
 		} else if (key.equals(Settings.PREF_INTERNAL_PICTURE_PATH)) {
 			mStorePath = prefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
+		} else if (key.equals(Settings.PREF_RING_HOURLY)) {
+			mBellHourly = prefs.getBoolean(Settings.PREF_RING_HOURLY, false);
+		} else if (key.equals(Settings.PREF_SAVE_COPY) || 
+				key.equals(Settings.PREF_FETCH_LARGER_PICTURE) || 
+				key.equals(Settings.PREF_PICTURE_SOURCE) || 
+				key.equals(Settings.PREF_PICTURE_PER_FETCH)) {
+			startUpdateService();
 		}
 	}
 }

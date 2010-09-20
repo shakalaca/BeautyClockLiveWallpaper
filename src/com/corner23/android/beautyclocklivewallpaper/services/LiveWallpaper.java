@@ -1,8 +1,11 @@
 package com.corner23.android.beautyclocklivewallpaper.services;
 
 import java.io.File;
+import java.util.TimeZone;
+import java.util.concurrent.RejectedExecutionException;
 
 import com.corner23.android.beautyclocklivewallpaper.Settings;
+import com.corner23.android.beautyclocklivewallpaper.asynctasks.PlayBellTask;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.service.wallpaper.WallpaperService;
 import android.text.format.Time;
 import android.util.Log;
@@ -48,11 +52,13 @@ public class LiveWallpaper extends WallpaperService {
 		private Time mTime = new Time();
 		private int mHour = 0;
 		private int mMinute = 0;
-
+		
 		// preferences
 		private boolean mFitScreen = false;
 		private String mStorePath = null;
+		private boolean mBellHourly = false;
 
+		private boolean mRegTimeBR = false;
 		private boolean mRegScreenBR = false;
 		private boolean mRegUpdateBR = false;
 		private boolean mIsEngineVisible = false;
@@ -65,6 +71,18 @@ public class LiveWallpaper extends WallpaperService {
 		
 		private Bitmap mBeautyBitmap = null;
 
+		private PlayBellTask mPlayBellTask = null;
+		
+		private final BroadcastReceiver mWallpaperUpdateBroadcastReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				Log.w(TAG, "mWallpaperUpdateBroadcastReceiver:onReceive");
+				updateBeautyBitmap();
+				draw();
+			}
+		};
+		
 		private final BroadcastReceiver mScreenBroadcastReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
@@ -72,22 +90,41 @@ public class LiveWallpaper extends WallpaperService {
 	        	if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
 	                // Log.v(TAG, "Intent.ACTION_SCREEN_ON"); 
 	                if (mIsEngineVisible) {
+			    		registerTimeBroadcastReceiver();
 	                	registerWallpaperUpdateBroadcastReceiver();
+	    				updateBeautyBitmap();
+	    				draw();
 	                }
 		    	} else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 		            // Log.v(TAG, "Intent.ACTION_SCREEN_OFF"); 
 		    		unregisterWallpaperUpdateBroadcastReceiver();
+		    		unregisterTimeBroadcastReceiver();
 		    	}
 			}
 		};
 		
-		private final BroadcastReceiver mWallpaperUpdateBroadcastReceiver = new BroadcastReceiver() {
-
+		private final BroadcastReceiver mTimeBroadcastReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				Log.w(TAG, "mWallpaperUpdateBroadcastReceiver:onReceive");
-				updateBitmap();
-				draw();
+				Log.i(TAG, "mTimeBroadcastReceiver:onReceive");
+				if (intent.getAction().equals(Intent.ACTION_TIMEZONE_CHANGED)) {
+					String tz = intent.getStringExtra("time-zone");
+					mTime = new Time(TimeZone.getTimeZone(tz).getID());
+					
+					startUpdateService();
+				} else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
+					startUpdateService();
+				} else {
+					updateTime();
+
+					if (mMinute == 0 && mBellHourly) {
+						cancelPlayBellTask();
+						startToPlayBell(mHour);
+					}
+					
+					updateBeautyBitmap();
+					draw();
+				}
 			}
 		};
 		
@@ -124,6 +161,40 @@ public class LiveWallpaper extends WallpaperService {
 			}
 		}
 		
+		private void registerTimeBroadcastReceiver() {
+			if (!mRegTimeBR) {
+				IntentFilter filter = new IntentFilter();  
+				filter.addAction(Intent.ACTION_TIME_TICK);  
+				filter.addAction(Intent.ACTION_TIME_CHANGED);  
+				filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+				registerReceiver(mTimeBroadcastReceiver, filter);
+				mRegTimeBR = true;
+			}
+		}
+		
+		private void unregisterTimeBroadcastReceiver() {
+			if (mRegTimeBR) {
+				unregisterReceiver(mTimeBroadcastReceiver);
+				mRegTimeBR = false;
+			}
+		}
+		
+		private void cancelPlayBellTask() {
+			if (mPlayBellTask != null &&
+				mPlayBellTask.getStatus() == AsyncTask.Status.RUNNING) {
+				mPlayBellTask.cancel(true);
+			}
+		}
+		
+		private void startToPlayBell(int hour) {
+			try {
+				mPlayBellTask = new PlayBellTask(LiveWallpaper.this);
+				mPlayBellTask.execute(hour);
+			} catch(RejectedExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+
 		BeautyClockEngine() {
 			mScreenHeight = getResources().getDisplayMetrics().heightPixels;
 			mScreenWidth = getResources().getDisplayMetrics().widthPixels;
@@ -133,159 +204,17 @@ public class LiveWallpaper extends WallpaperService {
 	    	onSharedPreferenceChanged(mPrefs, null);
 		}
 
-		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-			if (prefs == null) {
-				return;
-			}
-			
-			if (key == null) {
-				readDefaultPrefs(prefs);
-				return;
-			}
-			
-			if (key.equals(Settings.PREF_FIT_SCREEN)) {
-				mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
-				updateBitmap();
-				draw();
-			} else if (key.equals(Settings.PREF_INTERNAL_PICTURE_PATH)) {
-				mStorePath = prefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
-			}
-		}
-
-/*		
-		@Override
-		public void onSurfaceCreated(SurfaceHolder holder) {
-			Log.d(TAG, "onSurfaceCreated");
-			super.onSurfaceCreated(holder);
-		}
-
-		@Override
-		public int getDesiredMinimumHeight() {
-			Log.d(TAG, "getDesiredMinimumHeight");
-			return super.getDesiredMinimumHeight();
-		}
-
-		@Override
-		public int getDesiredMinimumWidth() {
-			Log.d(TAG, "getDesiredMinimumWidth");
-			return super.getDesiredMinimumWidth();
-		}
-
-		@Override
-		public SurfaceHolder getSurfaceHolder() {
-			Log.d(TAG, "getSurfaceHolder");
-			return super.getSurfaceHolder();
-		}
-
-		@Override
-		public boolean isPreview() {
-			Log.d(TAG, "isPreview");
-			return super.isPreview();
-		}
-
-		@Override
-		public boolean isVisible() {
-			Log.d(TAG, "isVisible");
-			return super.isVisible();
-		}
-
-		@Override
-		public Bundle onCommand(String action, int x, int y, int z,
-				Bundle extras, boolean resultRequested) {
-			Log.d(TAG, "onCommand");
-			return super.onCommand(action, x, y, z, extras, resultRequested);
-		}
-
-		@Override
-		public void onTouchEvent(MotionEvent event) {
-			Log.d(TAG, "onTouchEvent");
-			super.onTouchEvent(event);
-		}
-
-		@Override
-		public void setTouchEventsEnabled(boolean enabled) {
-			Log.d(TAG, "setTouchEventsEnabled:" + enabled);
-			super.setTouchEventsEnabled(enabled);
-		}
-
-
-		@Override
-		public void onDesiredSizeChanged(int desiredWidth, int desiredHeight) {
-			Log.d(TAG, "onDesiredSizeChanged");
-			super.onDesiredSizeChanged(desiredWidth, desiredHeight);
-		}
-
-		@Override
-		public void onSurfaceDestroyed(SurfaceHolder holder) {
-			Log.d(TAG, "onSurfaceDestroyed");
-			super.onSurfaceDestroyed(holder);
-		}
-*/
-		@Override
-		public void onCreate(SurfaceHolder surfaceHolder) {
-			// Log.d(TAG, "onCreate (engine)");
-			super.onCreate(surfaceHolder);
-
-			setTouchEventsEnabled(false);
-	    	
-			// register notification
-	    	registerWallpaperUpdateBroadcastReceiver();
-			registerScreenBroadcastReceiver();		
-		}
-
-		@Override
-		public void onDestroy() {
-			// Log.d(TAG, "onDestroy (engine)");
-			super.onDestroy();
-
-            unregisterWallpaperUpdateBroadcastReceiver();
-    		unregisterScreenBroadcastReceiver();
-		}
-
-		@Override
-		public void onOffsetsChanged(float xOffset, float yOffset,
-				float xOffsetStep, float yOffsetStep, int xPixelOffset,
-				int yPixelOffset) {
-			// Log.d(TAG, "onOffsetsChanged");
-			// Log.d(TAG, "x:" + xPixelOffset + ", y:" + yPixelOffset);
-			nXOffset = xPixelOffset;
-			if (bIsLarge) {
-				draw();
-			}
-		}
-
-		@Override
-		public void onSurfaceChanged(SurfaceHolder holder, int format,
-				int width, int height) {
-			// Log.d(TAG, "onSurfaceChanged:" + width + "," + height);
-			
-			mScreenHeight = height;
-			mScreenWidth = width;
-			updateBitmap();
-			draw();
-		}
-
-		@Override
-		public void onVisibilityChanged(boolean visible) {
-			Log.d(TAG, "onVisibilityChanged:" + visible);
-			if (visible) {
-				updateBitmap();
-				draw();
-				mIsEngineVisible = true;
-				registerWallpaperUpdateBroadcastReceiver();
-			} else {
-				mIsEngineVisible = false;
-				unregisterWallpaperUpdateBroadcastReceiver();
-			}
+		private void startUpdateService() {
+			Intent intent = new Intent(LiveWallpaper.this, UpdateService.class);
+			startService(intent);
 		}
 		
-		private void readDefaultPrefs(SharedPreferences prefs) {
-			if (prefs == null) {
-				return;
-			}
-			
-			mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
-			mStorePath = prefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
+		private void startUpdateServiceWithTime() {
+			Intent intent = new Intent(LiveWallpaper.this, UpdateService.class);
+			intent.putExtra("fetch_pictures", true);
+			intent.putExtra("hour", mHour);
+			intent.putExtra("minute", mMinute);
+			startService(intent);
 		}
 		
 		private void updateTime() {		
@@ -294,7 +223,7 @@ public class LiveWallpaper extends WallpaperService {
 			mMinute = mTime.minute;
 		}
 		
-		private void updateBitmap() {
+		private void updateBeautyBitmap() {
 			updateTime();
 			
 			// check SD card first
@@ -307,12 +236,7 @@ public class LiveWallpaper extends WallpaperService {
 				
 				File _f_cache = new File(fname);
 				if (!_f_cache.exists()) {
-					Intent intent = new Intent(LiveWallpaper.this, UpdateService.class);
-					intent.putExtra("fetch_pictures", true);
-					intent.putExtra("hour", mHour);
-					intent.putExtra("minute", mMinute);
-					startService(intent);
-					
+					startUpdateServiceWithTime();
 					return;
 				}
  			}
@@ -460,6 +384,166 @@ public class LiveWallpaper extends WallpaperService {
 				if (c != null) {
 					holder.unlockCanvasAndPost(c);
 				}
+			}
+		}
+		
+/*		
+		@Override
+		public void onSurfaceCreated(SurfaceHolder holder) {
+			Log.d(TAG, "onSurfaceCreated");
+			super.onSurfaceCreated(holder);
+		}
+
+		@Override
+		public int getDesiredMinimumHeight() {
+			Log.d(TAG, "getDesiredMinimumHeight");
+			return super.getDesiredMinimumHeight();
+		}
+
+		@Override
+		public int getDesiredMinimumWidth() {
+			Log.d(TAG, "getDesiredMinimumWidth");
+			return super.getDesiredMinimumWidth();
+		}
+
+		@Override
+		public SurfaceHolder getSurfaceHolder() {
+			Log.d(TAG, "getSurfaceHolder");
+			return super.getSurfaceHolder();
+		}
+
+		@Override
+		public boolean isPreview() {
+			Log.d(TAG, "isPreview");
+			return super.isPreview();
+		}
+
+		@Override
+		public boolean isVisible() {
+			Log.d(TAG, "isVisible");
+			return super.isVisible();
+		}
+
+		@Override
+		public Bundle onCommand(String action, int x, int y, int z,
+				Bundle extras, boolean resultRequested) {
+			Log.d(TAG, "onCommand");
+			return super.onCommand(action, x, y, z, extras, resultRequested);
+		}
+
+		@Override
+		public void onTouchEvent(MotionEvent event) {
+			Log.d(TAG, "onTouchEvent");
+			super.onTouchEvent(event);
+		}
+
+		@Override
+		public void setTouchEventsEnabled(boolean enabled) {
+			Log.d(TAG, "setTouchEventsEnabled:" + enabled);
+			super.setTouchEventsEnabled(enabled);
+		}
+
+
+		@Override
+		public void onDesiredSizeChanged(int desiredWidth, int desiredHeight) {
+			Log.d(TAG, "onDesiredSizeChanged");
+			super.onDesiredSizeChanged(desiredWidth, desiredHeight);
+		}
+
+		@Override
+		public void onSurfaceDestroyed(SurfaceHolder holder) {
+			Log.d(TAG, "onSurfaceDestroyed");
+			super.onSurfaceDestroyed(holder);
+		}
+*/
+		@Override
+		public void onCreate(SurfaceHolder surfaceHolder) {
+			// Log.d(TAG, "onCreate (engine)");
+			super.onCreate(surfaceHolder);
+
+			setTouchEventsEnabled(false);
+	    	
+			// register notification
+			registerTimeBroadcastReceiver();
+	    	registerWallpaperUpdateBroadcastReceiver();
+			registerScreenBroadcastReceiver();		
+		}
+
+		@Override
+		public void onDestroy() {
+			// Log.d(TAG, "onDestroy (engine)");
+			super.onDestroy();
+
+			cancelPlayBellTask();
+			
+			unregisterTimeBroadcastReceiver();
+            unregisterWallpaperUpdateBroadcastReceiver();
+    		unregisterScreenBroadcastReceiver();
+		}
+
+		@Override
+		public void onOffsetsChanged(float xOffset, float yOffset,
+				float xOffsetStep, float yOffsetStep, int xPixelOffset,
+				int yPixelOffset) {
+			// Log.d(TAG, "onOffsetsChanged");
+			// Log.d(TAG, "x:" + xPixelOffset + ", y:" + yPixelOffset);
+			nXOffset = xPixelOffset;
+			if (bIsLarge) {
+				draw();
+			}
+		}
+
+		@Override
+		public void onSurfaceChanged(SurfaceHolder holder, int format,
+				int width, int height) {
+			// Log.d(TAG, "onSurfaceChanged:" + width + "," + height);
+			
+			mScreenHeight = height;
+			mScreenWidth = width;
+			updateBeautyBitmap();
+			draw();
+		}
+
+		@Override
+		public void onVisibilityChanged(boolean visible) {
+			Log.d(TAG, "onVisibilityChanged:" + visible);
+			if (visible) {
+				updateBeautyBitmap();
+				draw();
+				mIsEngineVisible = true;
+				registerWallpaperUpdateBroadcastReceiver();
+			} else {
+				mIsEngineVisible = false;
+				unregisterWallpaperUpdateBroadcastReceiver();
+			}
+		}
+		
+		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+			if (prefs == null) {
+				return;
+			}
+			
+			if (key == null) {				
+				mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
+				mStorePath = prefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
+				mBellHourly = prefs.getBoolean(Settings.PREF_RING_HOURLY, false);
+
+				return;
+			}
+			
+			if (key.equals(Settings.PREF_FIT_SCREEN)) {
+				mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
+				updateBeautyBitmap();
+				draw();
+			} else if (key.equals(Settings.PREF_INTERNAL_PICTURE_PATH)) {
+				mStorePath = prefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
+			} else if (key.equals(Settings.PREF_RING_HOURLY)) {
+				mBellHourly = prefs.getBoolean(Settings.PREF_RING_HOURLY, false);
+			} else if (key.equals(Settings.PREF_SAVE_COPY) || 
+					key.equals(Settings.PREF_FETCH_LARGER_PICTURE) || 
+					key.equals(Settings.PREF_PICTURE_SOURCE) || 
+					key.equals(Settings.PREF_PICTURE_PER_FETCH)) {
+				startUpdateService();
 			}
 		}
 	}
