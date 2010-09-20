@@ -22,6 +22,20 @@ import android.view.SurfaceHolder;
 public class LiveWallpaper extends WallpaperService {
 
 	@Override
+	public void onCreate() {
+		super.onCreate();
+		    	
+		startService(new Intent(LiveWallpaper.this, UpdateService.class));
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		stopService(new Intent(LiveWallpaper.this, UpdateService.class));
+	}
+
+	@Override
 	public Engine onCreateEngine() {
 		return new BeautyClockEngine();
 	}
@@ -117,8 +131,6 @@ public class LiveWallpaper extends WallpaperService {
 	    	mPrefs = getSharedPreferences(Settings.SHARED_PREFS_NAME, 0);
 	    	mPrefs.registerOnSharedPreferenceChangeListener(this);
 	    	onSharedPreferenceChanged(mPrefs, null);
-	    	
-			startService(new Intent(LiveWallpaper.this, UpdateService.class));
 		}
 
 		public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {

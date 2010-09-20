@@ -166,6 +166,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		}
 		
 		try {
+			new_file.getParentFile().mkdirs();
 			FileOutputStream out = new FileOutputStream(new_file);
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
 			out.flush();

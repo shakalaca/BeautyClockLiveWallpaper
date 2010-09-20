@@ -332,7 +332,7 @@ public class UpdateService extends Service implements SharedPreferences.OnShared
 		try {
 			File mFile = new File("/sdcard/BeautyClock/pic/.nomedia");
 			if (mFile != null) {
-				mFile.mkdirs();
+				mFile.getParentFile().mkdirs();
 				mFile.createNewFile();
 			}
 		} catch (IOException e) {
