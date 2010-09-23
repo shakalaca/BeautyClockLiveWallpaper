@@ -28,6 +28,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
 public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
@@ -59,7 +60,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 	private static final String LOVELY_TIME_PICTURE_URL = "http://gameflier.lovelytime.com.tw/photo/%02d%02d.JPG";
 	private static final String AVTOKEI_PICTURE_URL = "http://www.avtokei.jp/images/clocks/%02d/%02d%02d.jpg";
 
-	private static final String SDCARD_BASE_PATH = "/sdcard/BeautyClock/pic/%s/%02d%02d.jpg";
+	private static final String SDCARD_BASE_PATH = Environment.getExternalStorageDirectory().getPath() + "/BeautyClock/pic/%s/%02d%02d.jpg";
 	private static final String ARTHUR_PICTURE = "arthur";
 	private static final String CLOCKM_PICTURE = "clockm";
 	private static final String BIJIN_PICTURE = "bijin";

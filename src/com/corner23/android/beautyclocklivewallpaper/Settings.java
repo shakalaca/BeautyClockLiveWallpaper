@@ -7,6 +7,7 @@ import com.corner23.android.beautyclocklivewallpaper.services.DeadWallpaper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceActivity;
 
 public class Settings extends PreferenceActivity 
@@ -28,7 +29,7 @@ public class Settings extends PreferenceActivity
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         getPreferenceManager().setSharedPreferencesName(SHARED_PREFS_NAME);
-		File secretParadise = new File("/sdcard/BeautyClock/givemepower");
+		File secretParadise = new File(Environment.getExternalStorageDirectory() + "/BeautyClock/givemepower");
 		if (secretParadise.exists()) {
 			addPreferencesFromResource(R.xml.preferences_secret);
 		} else {

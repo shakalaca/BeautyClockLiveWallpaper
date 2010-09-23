@@ -6,13 +6,14 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
 public class PlayBellTask extends AsyncTask<Integer, Void, Void> {
 
 	private static final String TAG = "PlayBellTask";
 	
-	private static final String BELL_TO_PLAY = "/sdcard/BeautyClock/bell/bell%02d.mp3";
+	private static final String BELL_TO_PLAY = Environment.getExternalStorageDirectory().getPath() + "/BeautyClock/bell/bell%02d.mp3";
 
 	private Context mContext = null;
 
