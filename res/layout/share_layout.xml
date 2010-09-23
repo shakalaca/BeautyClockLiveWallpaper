@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent" 
+	android:gravity="center"
+	android:background="#BB000000" >
+	<RelativeLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+		android:background="@android:color/white"
+		android:padding="8px" >
+		<ImageView 
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:id="@+id/ShareImageView"
+		/>
+	</RelativeLayout>
+	<Button 
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content" 
+		android:id="@+id/ShareButton"
+		android:text="@string/share_picture_btn_text"
+	/>
+</LinearLayout>

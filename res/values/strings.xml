@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Beauty Clock</string>
+	<string name="share_widget_name">Beauty Clock Wallpaper Share Widget</string>
+	<string name="share_widget_text">Share this wallpaper</string>
+	<string name="share_picture_btn_text">Share it !</string>
+	<string name="share_picture_failed_text">Error loading picture.. please try again.</string>
+	<string name="share_picture_msg_text">I love this wallpaper !</string>
+	<string name="share_picture_subject_text">I love this wallpaper !</string>
+	<string name="share_picture_title_text">I love this wallpaper !</string>
 	
 	<string name="bc_main_help_text">This is a widget, \n\n<b>To use it:</b> \n1. Press menu key in home screen \n2. Select Add \n3. Select widgets \n4. Choose Beauty Clock.\n\n<b>To setup widget:</b>\npress menu key here.\n\n<b>To bell on every hour:</b>\n1. Enable this feature in settings.\n2. Create BeautyClock\\bell directory in your sdcard. \n3. Put bell00.mp3 ~ bell23.mp3 in that directory.\n\n<b>To use your own tokei:</b>\n1. Create BeautyClock\\pic\\custom directory in your sdcard.\n2. Put hhmm.jpg under that directory. (hh = 00 ~ 23 and mm = 00 ~ 59, which presents every minute.)</string>
 	<string name="bc_settings_menu_text">Beauty Clock Settings</string>
