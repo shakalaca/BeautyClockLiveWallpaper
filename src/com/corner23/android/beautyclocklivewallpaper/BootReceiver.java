@@ -15,9 +15,7 @@ public class BootReceiver extends BroadcastReceiver {
 			if (prefs != null) {
 				boolean enableDeadWallpaperService = prefs.getBoolean(Settings.PREF_ENABLE_DEADWALLPAPER, false);
 				if (enableDeadWallpaperService) {
-		    		Intent i = new Intent(context, DeadWallpaper.class);
-		    		i.putExtra("enable", true);
-		    		context.startService(i);
+		    		context.startService(new Intent(context, DeadWallpaper.class));
 				}
 			}
 		}

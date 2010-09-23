@@ -65,8 +65,11 @@ public class Settings extends PreferenceActivity
     	if (key.equals(PREF_ENABLE_DEADWALLPAPER)) {
     		boolean enable = prefs.getBoolean(PREF_ENABLE_DEADWALLPAPER, false);
     		Intent intent = new Intent(this, DeadWallpaper.class);
-    		intent.putExtra("enable", enable);
-    		startService(intent);
+    		if (enable) {
+        		startService(intent);
+    		} else {
+    			stopService(intent);
+    		}
     	}
     }
 }

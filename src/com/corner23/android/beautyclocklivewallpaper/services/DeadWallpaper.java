@@ -301,6 +301,14 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		unregisterTimeBroadcastReceiver();
 		unregisterScreenBroadcastReceiver();
 		
+		try {
+			wm.suggestDesiredDimensions(OrigWallpaperWidth, OrigWallpaperHeight);
+			wm.clear();
+			Log.d(TAG, OrigWallpaperWidth + "x" + OrigWallpaperHeight);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		super.onDestroy();
 	}
 	
@@ -313,22 +321,8 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i(TAG, "onStartCommand");
 				
-		if (intent != null) {
-			boolean enable = intent.getBooleanExtra("enable", false);
-			if (enable) {
-				updateBeautyBitmap();
-				setWallpaper();
-			} else {
-				try {
-					wm.suggestDesiredDimensions(OrigWallpaperWidth, OrigWallpaperHeight);
-					wm.clear();
-					Log.d(TAG, OrigWallpaperWidth + "x" + OrigWallpaperHeight);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				this.stopSelf();
-			}
-		}
+		updateBeautyBitmap();
+		setWallpaper();
 		
 		return START_STICKY;
 	}
