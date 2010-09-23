@@ -301,6 +301,8 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		unregisterTimeBroadcastReceiver();
 		unregisterScreenBroadcastReceiver();
 		
+		stopService(new Intent(DeadWallpaper.this, UpdateService.class));
+		
 		try {
 			wm.suggestDesiredDimensions(OrigWallpaperWidth, OrigWallpaperHeight);
 			wm.clear();
