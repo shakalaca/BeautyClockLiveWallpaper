@@ -28,7 +28,9 @@ public class LiveWallpaper extends WallpaperService {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		    	
+		
+		this.getCacheDir().mkdirs();
+		
 		startService(new Intent(LiveWallpaper.this, UpdateService.class));
 	}
 

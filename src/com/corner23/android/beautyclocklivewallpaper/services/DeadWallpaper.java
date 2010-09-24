@@ -274,6 +274,8 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 	public void onCreate() {
 		super.onCreate();
 		
+		this.getCacheDir().mkdirs();
+
 		// register notification
 		registerWallpaperUpdateBroadcastReceiver();
 		registerTimeBroadcastReceiver();
