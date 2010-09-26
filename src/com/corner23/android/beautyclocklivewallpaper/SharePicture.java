@@ -50,14 +50,6 @@ public class SharePicture extends Activity {
 		
 		setContentView(R.layout.share_layout);
 		
-		ImageView iv = (ImageView) findViewById(R.id.ShareImageView);
-		Bitmap pic = LoadCurrentPicture();
-		if (pic != null) {
-			iv.setImageBitmap(pic);
-		} else {
-			Toast.makeText(this, R.string.share_picture_failed_text, Toast.LENGTH_SHORT).show();
-		}
-		
 		Button btn = (Button) findViewById(R.id.ShareButton);
 		btn.setOnClickListener(new OnClickListener() {
 
@@ -78,5 +70,14 @@ public class SharePicture extends Activity {
 				SharePicture.this.finish();
 			}
 		});
+		
+		ImageView iv = (ImageView) findViewById(R.id.ShareImageView);
+		Bitmap pic = LoadCurrentPicture();		
+		if (pic != null) {
+			iv.setImageBitmap(pic);
+		} else {
+			Toast.makeText(this, R.string.share_picture_failed_text, Toast.LENGTH_SHORT).show();
+			SharePicture.this.finish();
+		}
 	}
 }
