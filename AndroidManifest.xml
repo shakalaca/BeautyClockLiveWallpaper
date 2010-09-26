@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.corner23.android.beautyclocklivewallpaper"
       android:versionCode="9"
-      android:versionName="2.1">
+      android:versionName="2.3">
     <uses-sdk android:minSdkVersion="7" />
     
     <application android:icon="@drawable/icon" android:label="@string/app_name">
@@ -31,7 +31,11 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
         </activity>
-    	<receiver android:name=".widget.ShareWidgetProvider">
+    	<receiver 
+    		android:name=".widget.ShareWidgetProvider"
+    		android:label="@string/share_widget_name"
+    		android:icon="@drawable/widget_icon"
+    		>
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 			</intent-filter>

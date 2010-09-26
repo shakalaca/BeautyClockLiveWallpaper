@@ -8,6 +8,12 @@ Just for fun, any questions feel free contact me :-)
 
 E-mail: shakalaca AT gmail dot com
 
+2010-09-26 v2.3:
+* Add share picture widget
+* Change UpdateService to fetch only and more power efficient
+* Fix error saving pictures in sd card
+* Fix other bugs..
+
 2010-07-29 v2.1:
 * Add Dead Wallpaper for devices don't support live wallpaper
 * Refine settings structure
