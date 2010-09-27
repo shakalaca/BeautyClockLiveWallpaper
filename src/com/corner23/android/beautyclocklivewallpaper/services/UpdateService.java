@@ -220,7 +220,7 @@ public class UpdateService extends Service {
     	// create .nomedia to prevent scanning of this folder
 		try {
 			File mFile = new File(Environment.getExternalStorageDirectory().getPath() + "/BeautyClock/pic/.nomedia");
-			if (mFile != null) {
+			if (mFile != null && !mFile.exists()) {
 				mFile.getParentFile().mkdirs();
 				mFile.createNewFile();
 			}
