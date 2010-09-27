@@ -11,14 +11,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class SharePicture extends Activity {
+public class SharePicture extends Activity implements View.OnClickListener {
 	
 	private File PictureFile = null;
+	
+	private ImageView shareIV = null;
+	private ImageView closeIV = null;
 
 	private Bitmap LoadCurrentPicture() {
 		Time mTime = new Time();
@@ -50,34 +52,39 @@ public class SharePicture extends Activity {
 		
 		setContentView(R.layout.share_layout);
 		
-		Button btn = (Button) findViewById(R.id.ShareButton);
-		btn.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				if (PictureFile != null) {
-					Intent shareIntent = new Intent(Intent.ACTION_SEND);
-					shareIntent.setType("image/jpeg");
-					shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(PictureFile));
-					shareIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_picture_subject_text));
-					shareIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_picture_msg_text));
-					shareIntent.putExtra(Intent.EXTRA_TITLE, getResources().getString(R.string.share_picture_title_text));
-					startActivity(shareIntent);
-				} else {
-					Toast.makeText(SharePicture.this, R.string.share_picture_failed_text, Toast.LENGTH_SHORT).show();
-				}
-				
-				SharePicture.this.finish();
-			}
-		});
-		
-		ImageView iv = (ImageView) findViewById(R.id.ShareImageView);
+		shareIV = (ImageView) findViewById(R.id.ShareImageView);
 		Bitmap pic = LoadCurrentPicture();		
 		if (pic != null) {
-			iv.setImageBitmap(pic);
+			shareIV.setImageBitmap(pic);
+			shareIV.setOnClickListener(this);
+						
+			TextView tv = (TextView) findViewById(R.id.ShareButton);
+			tv.setOnClickListener(this);
+			
+			closeIV = (ImageView) findViewById(R.id.CloseImageView);
+			closeIV.setOnClickListener(this);
 		} else {
 			Toast.makeText(this, R.string.share_picture_failed_text, Toast.LENGTH_SHORT).show();
 			SharePicture.this.finish();
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		if (v != closeIV) {
+			if (PictureFile != null) {
+				Intent shareIntent = new Intent(Intent.ACTION_SEND);
+				shareIntent.setType("image/jpeg");
+				shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(PictureFile));
+				shareIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_picture_subject_text));
+				shareIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_picture_msg_text));
+				shareIntent.putExtra(Intent.EXTRA_TITLE, getResources().getString(R.string.share_picture_title_text));
+				startActivity(shareIntent);
+			} else {
+				Toast.makeText(SharePicture.this, R.string.share_picture_failed_text, Toast.LENGTH_SHORT).show();
+			}
+		}
+		
+		SharePicture.this.finish();
 	}
 }

@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent" 
-	android:gravity="center"
 	android:background="#BB000000" >
-	<RelativeLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" 
-		android:background="@android:color/white"
-		android:padding="8px" >
-		<ImageView 
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:id="@+id/ShareImageView"
-		/>
-	</RelativeLayout>
-	<Button 
+	<ImageView 
+		android:id="@+id/ShareImageView"
 		android:layout_height="wrap_content"
-		android:layout_width="wrap_content" 
+		android:layout_width="wrap_content"
+		android:layout_centerInParent="true"
+		android:background="@android:color/white"
+		android:padding="8dp"
+	/>
+	<ImageView 
+		android:id="@+id/CloseImageView"
+		android:layout_height="wrap_content"
+		android:layout_width="wrap_content"
+		android:layout_above="@id/ShareImageView"
+		android:layout_toRightOf="@id/ShareImageView"
+		android:src="@drawable/close"
+	/>
+	<TextView 
 		android:id="@+id/ShareButton"
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent" 
+		android:layout_alignBottom="@id/ShareImageView"
+		android:background="#77000000"
+		android:gravity="center"
+		android:textSize="40sp"
+		android:textColor="@android:color/white"
 		android:text="@string/share_picture_btn_text"
 	/>
-</LinearLayout>
+</RelativeLayout>

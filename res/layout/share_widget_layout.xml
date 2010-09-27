@@ -5,17 +5,19 @@
 	android:layout_height="fill_parent" 
 	android:gravity="center" >
 	<ImageView
-		android:layout_height="48dip"
-		android:layout_width="48dip"
+		android:id="@+id/WidgetIcon"
+		android:layout_height="48dp"
+		android:layout_width="48dp"
 		android:layout_centerHorizontal="true"
 		android:src="@drawable/icon"
 		/>
 	<ImageView
-		android:layout_height="30dip"
-		android:layout_width="30dip"
-		android:layout_marginTop="30dip"
-		android:layout_marginRight="5dip"
-		android:layout_alignParentRight="true"
+		android:layout_height="30dp"
+		android:layout_width="30dp"
+		android:layout_marginTop="30dp"
+		android:layout_marginLeft="30dp"
+		android:layout_alignTop="@id/WidgetIcon"
+		android:layout_alignLeft="@id/WidgetIcon"
 		android:src="@drawable/share"
 		/>
 </RelativeLayout>
