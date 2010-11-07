@@ -75,11 +75,15 @@ public class LiveWallpaper extends WallpaperService {
 
 		private PlayBellTask mPlayBellTask = null;
 		
+		private boolean bUpdateStarted = false;
+		private int mFailedCount = 0;
+		
 		private final BroadcastReceiver mWallpaperUpdateBroadcastReceiver = new BroadcastReceiver() {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
 				Log.w(TAG, "mWallpaperUpdateBroadcastReceiver:onReceive");
+				bUpdateStarted = true;
 				updateBeautyBitmap();
 				draw();
 			}
@@ -122,6 +126,13 @@ public class LiveWallpaper extends WallpaperService {
 					if (mMinute == 0 && mBellHourly) {
 						cancelPlayBellTask();
 						startToPlayBell(mHour);
+					}
+					
+					if (!bUpdateStarted) {
+						mFailedCount++;
+						if (mFailedCount == 3) {
+							bUpdateStarted = true;
+						}
 					}
 					
 					updateBeautyBitmap();
@@ -212,11 +223,13 @@ public class LiveWallpaper extends WallpaperService {
 		}
 		
 		private void startUpdateServiceWithTime() {
-			Intent intent = new Intent(LiveWallpaper.this, UpdateService.class);
-			intent.putExtra("fetch_pictures", true);
-			intent.putExtra("hour", mHour);
-			intent.putExtra("minute", mMinute);
-			startService(intent);
+			if (bUpdateStarted) {
+				Intent intent = new Intent(LiveWallpaper.this, UpdateService.class);
+				intent.putExtra("fetch_pictures", true);
+				intent.putExtra("hour", mHour);
+				intent.putExtra("minute", mMinute);
+				startService(intent);
+			}
 		}
 		
 		private void updateTime() {		
@@ -463,7 +476,7 @@ public class LiveWallpaper extends WallpaperService {
 			// Log.d(TAG, "onCreate (engine)");
 			super.onCreate(surfaceHolder);
 
-			setTouchEventsEnabled(false);
+			// setTouchEventsEnabled(false);
 	    	
 			// register notification
 			registerTimeBroadcastReceiver();

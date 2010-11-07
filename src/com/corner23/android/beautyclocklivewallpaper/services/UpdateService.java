@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.format.Time;
@@ -54,6 +55,8 @@ public class UpdateService extends Service {
 	private int mCurrentCount = 0;
 	private int mTimeOutCount = 0;
 
+	final Handler mHandler = new Handler(); 
+	
 	private void cancelFetchBeautyPictureTask() {
 		if (mFetchBeautyPictureTask != null &&
 			mFetchBeautyPictureTask.getStatus() == AsyncTask.Status.RUNNING) {
@@ -124,6 +127,12 @@ public class UpdateService extends Service {
 		mPicturesPerFetch = Integer.parseInt(prefs.getString(Settings.PREF_PICTURE_PER_FETCH, "30"));
 	}
 	
+	private Runnable fetchTask = new Runnable() {
+		public void run() {
+			startToFetchBeautyPictureTask();
+		}
+	};
+	
 	@Override
 	public void onStart(Intent intent, int startId) {
 		onStartCommand(intent, 0, startId);
@@ -182,7 +191,7 @@ public class UpdateService extends Service {
 				}
 
 				if (mCurrentCount < mPicturesPerFetch) {
-					startToFetchBeautyPictureTask();
+					mHandler.postDelayed(fetchTask, 2000);
 				} else {
 					mCurrentCount = 0;
 					
@@ -232,6 +241,7 @@ public class UpdateService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		
+		mHandler.removeCallbacks(fetchTask);
 		cancelCleanUpCacheTask();
 		cancelFetchBeautyPictureTask();
 	}

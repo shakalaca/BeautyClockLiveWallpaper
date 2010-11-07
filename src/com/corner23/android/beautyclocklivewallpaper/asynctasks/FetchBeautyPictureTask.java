@@ -23,8 +23,6 @@ import com.corner23.android.beautyclocklivewallpaper.services.UpdateService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -166,7 +164,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		return referer;
 	}
 	
-	private boolean saveBitmapToFile(Bitmap bitmap, File new_file) {
+	private boolean saveBitmapToFile(byte[] bitmap, File new_file) {
 		if (bitmap == null || new_file == null) {
 			Log.e(TAG, "Null parameters in saveBitmapToFile");
 			return false;
@@ -175,7 +173,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		try {
 			new_file.getParentFile().mkdirs();
 			FileOutputStream out = new FileOutputStream(new_file);
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			out.write(bitmap, 0, bitmap.length);
 			out.flush();
 			out.close();
 		} catch (Exception e) {
@@ -186,8 +184,8 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		return true;
 	}
 	
-	private Bitmap fetchBeautyPictureBitmapFromURL(URL url, String referer) throws IOException {
-		Bitmap bitmap = null;
+	private byte[] fetchBeautyPictureBitmapFromURL(URL url, String referer) throws IOException {
+		byte[] bitmap = null;
 		InputStream in = null;
 		OutputStream out = null;
 		URLConnection urlc = null;
@@ -242,8 +240,8 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 			copy(in, out);
 			out.flush();
 
-			byte[] data = dataStream.toByteArray();
-			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+			bitmap = dataStream.toByteArray();
+			// bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 		} finally {
 			closeStream(in);
 			closeStream(out);
@@ -286,7 +284,6 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 			File _file_sdcard = new File(_path_sdcard);
 			if (_file_sdcard.exists()) {
 				Log.d(TAG, "File in SD card:" + _path_sdcard);
-				Thread.sleep(1000);
 				return BCLW_FETCH_STATE_SUCCESS;
 			}
 
@@ -295,19 +292,19 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 			File _file_cache = new File(mContext.getCacheDir(), _path_cache);
 			if (_file_cache.exists()) {
 				Log.d(TAG, "File in cache");
-				Thread.sleep(1000);
 				return BCLW_FETCH_STATE_SUCCESS;
 			}
-			
+
 			URL mURL = new URL(getURL());
-			Bitmap bitmap = fetchBeautyPictureBitmapFromURL(mURL, getReferer());
+			byte[] bitmap = fetchBeautyPictureBitmapFromURL(mURL, getReferer());
 			if (bitmap != null) {
 				Log.d(TAG, "saving..");
 				Log.d(TAG, mURL.toString());
-				saveBitmapToFile(bitmap, _file_cache);
 				if (mSaveCopy) {
-					// Log.d(TAG, "saving.. to sd");
+					Log.d(TAG, "saving.. to sd");
 					saveBitmapToFile(bitmap, _file_sdcard);
+				} else {
+					saveBitmapToFile(bitmap, _file_cache);
 				}
 
 				ret = BCLW_FETCH_STATE_SUCCESS;
@@ -324,8 +321,6 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 					ret = BCLW_FETCH_STATE_TIMEOUT;
 				}
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 		return ret;
 	}
