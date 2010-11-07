@@ -49,6 +49,7 @@
 		<item>circuit-tokei</item>
 		<item>Binan-tokei</item>
 		<item>Lovely Time II</item>
+		<item>Wretch</item>
 		<item>Your own tokei</item>
  		<item>AV tokei</item>
 	</string-array>
@@ -63,6 +64,7 @@
 		<item>circuit-tokei</item>
 		<item>Binan-tokei</item>
 		<item>Lovely Time II</item>
+		<item>Wretch</item>
 		<item>Your own tokei</item>
 	</string-array>
 
@@ -78,6 +80,7 @@
 		<item>8</item>	
 		<item>9</item>	
 		<item>10</item>	
+		<item>11</item>	
 	</string-array>
 	
 	<string-array name="bc_fetch_frequency_entries">

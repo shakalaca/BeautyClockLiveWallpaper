@@ -99,7 +99,7 @@ public class UpdateService extends Service {
 	
 	private void UpdatePictures() {			
 		// don't update on custom files..
-		if (mPictureSource != 9) {
+		if (mPictureSource != 10) {
 			Time mTime = new Time();
 			mTime.setToNow();		
 			mCurrentCount = 0;
