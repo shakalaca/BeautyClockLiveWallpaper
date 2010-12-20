@@ -50,8 +50,8 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 	private static final String BIJIN_GAL_PICTURE_URL_L = "http://gal.bijint.com/assets/pict/gal/590x450/%02d%02d.jpg";
 	private static final String BIJIN_GAL_PICTURE_URL = "http://gal.bijint.com/assets/pict/gal/240x320/%02d%02d.jpg";
 	private static final String BIJIN_CC_PICTURE_URL = "http://www.bijint.com/assets/pict/cc/590x450/%02d%02d.jpg";
-	private static final String BINAN_PICTURE_URL_L = "http://www.bijint.com/assets/pict/bijin/590x450/%02d%02d.jpg";
-	private static final String BINAN_PICTURE_URL = "http://www.bijint.com/assets/pict/bijin/240x320/%02d%02d.jpg";
+	private static final String BINAN_PICTURE_URL_L = "http://www.bijint.com/assets/pict/binan/590x450/%02d%02d.jpg";
+	private static final String BINAN_PICTURE_URL = "http://www.bijint.com/assets/pict/binan/240x320/%02d%02d.jpg";
 	private static final String BIJIN_HK_PICTURE_URL_L = "http://www.bijint.com/assets/pict/hk/590x450/%02d%02d.jpg";
 	private static final String BIJIN_HK_PICTURE_URL = "http://www.bijint.com/assets/pict/hk/240x320/%02d%02d.jpg";
 	private static final String LOVELY_TIME_PICTURE_URL = "http://gameflier.lovelytime.com.tw/photo/%02d%02d.JPG";
