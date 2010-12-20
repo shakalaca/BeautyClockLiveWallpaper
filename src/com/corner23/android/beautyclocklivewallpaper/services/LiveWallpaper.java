@@ -301,6 +301,10 @@ public class LiveWallpaper extends WallpaperService {
 					width = mScreenWidth*2;
 				}
 			}
+			
+			if (isPreview()) {
+				height = mScreenHeight - STATUS_BAR_HEIGHT * 3;
+			}
 
 //			Log.w(TAG, "bitmap:"+ bitmap.getWidth() + "x" + bitmap.getHeight() + ":"+ bitmap.getDensity());
 //			Log.w(TAG, "bitmap:"+ bitmap.getWidth()*bitmap.getHeight());
@@ -329,16 +333,21 @@ public class LiveWallpaper extends WallpaperService {
 				bIsLarge = false;
 			}
 			
-			if (mScreenWidth > mScreenHeight) {
-				int offset = (int) (mScreenWidth * (bIsLarge ? 1.2 : 1) - width) / 2;
-				if (offset > 0) {
-					Xpos += offset;
-				}
+			if (isPreview()) {
+				Xpos = -(width - mScreenWidth) / 2;
+				Ypos = STATUS_BAR_HEIGHT;
 			} else {
-				if (!mFitScreen) {
-					int offset = (mScreenHeight - STATUS_BAR_HEIGHT - height) / 2;
+				if (mScreenWidth > mScreenHeight) {
+					int offset = (int) (mScreenWidth * (bIsLarge ? 1.2 : 1) - width) / 2;
 					if (offset > 0) {
-						Ypos += offset;
+						Xpos += offset;
+					}
+				} else {
+					if (!mFitScreen) {
+						int offset = (mScreenHeight - STATUS_BAR_HEIGHT - height) / 2;
+						if (offset > 0) {
+							Ypos += offset;
+						}
 					}
 				}
 			}
