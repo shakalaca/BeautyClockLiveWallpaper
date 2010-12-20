@@ -43,10 +43,20 @@
 		<item>Arthur</item>
 		<item>ClockM</item>
 		<item>Bijin-tokei (japan)</item>
-		<item>Bijin-tokei (korea)</item>
-		<item>Bijin-tokei (hk)</item>
-		<item>GAL-tokei</item>
-		<item>circuit-tokei</item>
+		<item>Bijin-tokei (韓国)</item>
+		<item>Bijin-tokei (香港)</item>
+		<item>Bijin-tokei (新潟)</item>
+		<item>Bijin-tokei (鹿児島)</item>
+		<item>Bijin-tokei (名古屋)</item>
+		<item>Bijin-tokei (香川)</item>
+		<item>Bijin-tokei (岡山)</item>
+		<item>Bijin-tokei (福岡)</item>
+		<item>Bijin-tokei (金沢)</item>
+		<item>Bijin-tokei (京都)</item>
+		<item>Bijin-tokei (仙台)</item>
+		<item>Bijin-tokei (北海道)</item>
+		<item>Bijin-tokei (GAL)</item>
+		<item>Bijin-tokei (サーキット)</item>
 		<item>Binan-tokei</item>
 		<item>Lovely Time II</item>
 		<item>Wretch</item>
@@ -58,16 +68,50 @@
 		<item>Arthur</item>
 		<item>ClockM</item>
 		<item>Bijin-tokei (japan)</item>
-		<item>Bijin-tokei (korea)</item>
-		<item>Bijin-tokei (hk)</item>
-		<item>GAL-tokei</item>
-		<item>circuit-tokei</item>
+		<item>Bijin-tokei (韓国)</item>
+		<item>Bijin-tokei (香港)</item>
+		<item>Bijin-tokei (新潟)</item>
+		<item>Bijin-tokei (鹿児島)</item>
+		<item>Bijin-tokei (名古屋)</item>
+		<item>Bijin-tokei (香川)</item>
+		<item>Bijin-tokei (岡山)</item>
+		<item>Bijin-tokei (福岡)</item>
+		<item>Bijin-tokei (金沢)</item>
+		<item>Bijin-tokei (京都)</item>
+		<item>Bijin-tokei (仙台)</item>
+		<item>Bijin-tokei (北海道)</item>
+		<item>Bijin-tokei (GAL)</item>
+		<item>Bijin-tokei (サーキット)</item>
 		<item>Binan-tokei</item>
 		<item>Lovely Time II</item>
 		<item>Wretch</item>
 		<item>Your own tokei</item>
 	</string-array>
 
+	<string-array name="bc_picture_source_entries_orig">
+		<item>Arthur</item>
+		<item>ClockM</item>
+		<item>Bijin-tokei (japan)</item>
+		<item>Bijin-tokei (korea)</item>
+		<item>Bijin-tokei (hk)</item>
+		<item>Bijin-tokei (niigata)</item>
+		<item>Bijin-tokei (kagoshima)</item>
+		<item>Bijin-tokei (nagoya)</item>
+		<item>Bijin-tokei (kagawa)</item>
+		<item>Bijin-tokei (okayama)</item>
+		<item>Bijin-tokei (fukuoka)</item>
+		<item>Bijin-tokei (kanazawa)</item>
+		<item>Bijin-tokei (kyoto)</item>
+		<item>Bijin-tokei (sendai)</item>
+		<item>Bijin-tokei (hokkaido)</item>
+		<item>Bijin-tokei (GAL)</item>
+		<item>Bijin-tokei (circuit)</item>
+		<item>Binan-tokei</item>
+		<item>Lovely Time II</item>
+		<item>Wretch</item>
+		<item>Your own tokei</item>
+	</string-array>
+	
 	<string-array name="bc_picture_source_entry_values">
 		<item>0</item>
 		<item>1</item>
@@ -81,6 +125,16 @@
 		<item>9</item>	
 		<item>10</item>	
 		<item>11</item>	
+		<item>12</item>	
+		<item>13</item>	
+		<item>14</item>	
+		<item>15</item>	
+		<item>16</item>	
+		<item>17</item>	
+		<item>18</item>	
+		<item>19</item>	
+		<item>20</item>	
+		<item>21</item>	
 	</string-array>
 	
 	<string-array name="bc_fetch_frequency_entries">
