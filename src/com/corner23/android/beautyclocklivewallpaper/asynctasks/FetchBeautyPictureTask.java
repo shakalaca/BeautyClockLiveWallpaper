@@ -41,8 +41,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 
 	private static final String TAG = "FetchBeautyPictureTask";
 
-	private static final String END_STR = "_0";	
-	private static final String ARTHUR_PICTURE_URL = "http://www.arthur.com.tw/photo/images/400/%02d%02d%s.JPG";
+	private static final String ARTHUR_PICTURE_URL = "http://www.arthur.com.tw/photo/images/400/%02d%02d.JPG";
 	private static final String CLOCKM_PICTURE_URL = "http://www.clockm.com/tw/img/clk/hour/%02d%02d.jpg";
 	private static final String BIJIN_PICTURE_URL_L = "http://www.bijint.com/assets/pict/bijin/590x450/%02d%02d.jpg";
 	private static final String BIJIN_PICTURE_URL = "http://www.bijint.com/assets/pict/bijin/240x320/%02d%02d.jpg";
@@ -133,7 +132,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		String URLstr = null;
 		switch (mPictureSource) {
 		default:
-		case 0:	URLstr = String.format(ARTHUR_PICTURE_URL, mHour, mMinute, (mMinute == 0) ? END_STR : ""); break;
+		case 0:	URLstr = String.format(ARTHUR_PICTURE_URL, mHour, mMinute); break;
 		case 1:	URLstr = String.format(CLOCKM_PICTURE_URL, mHour, mMinute); break;
 		case 2: URLstr = String.format(mFetchLargerPicture ? BIJIN_PICTURE_URL_L : BIJIN_PICTURE_URL, mHour, mMinute); break;
 		case 3: URLstr = String.format(mFetchLargerPicture ? BIJIN_KOREA_PICTURE_URL_L : BIJIN_KOREA_PICTURE_URL, mHour, mMinute); break;
