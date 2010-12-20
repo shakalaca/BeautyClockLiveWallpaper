@@ -32,6 +32,7 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 	private boolean mFitScreen = false;
 	private String mStorePath = null;
 	private boolean mBellHourly = false;
+	private boolean mNoScroll = false;
 
 	private int mScreenHeight = 0;
 	private int mScreenWidth = 0;
@@ -244,6 +245,20 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		
 		mBitmapHeight = height;
 		mBitmapWidth = width;
+		
+		
+		if (mNoScroll) {
+//			Log.d(TAG, "w:" + width + ", h:" + height);
+//			Log.d(TAG, "Sw:" + mScreenWidth + ", Sh:" + mScreenHeight);
+			int Xpos = (width - mScreenWidth)/2;
+			if (Xpos < 0) {
+				Xpos = 0;
+			}
+			Bitmap tmpBitmap = Bitmap.createScaledBitmap(mBeautyBitmap, width, height, true);
+			mBeautyBitmap = Bitmap.createBitmap(tmpBitmap, Xpos, 0, mScreenWidth, height);
+			mBitmapHeight = mScreenHeight;
+			mBitmapWidth = mScreenWidth;
+		}
 	}
 	
 	private void setWallpaper() {
@@ -344,6 +359,7 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		if (key == null) {
 			mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
 			mStorePath = prefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
+			mNoScroll = prefs.getBoolean(Settings.PREF_NO_SCROLL, false);
 			
 			return;
 		}
@@ -360,6 +376,9 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 				key.equals(Settings.PREF_PICTURE_SOURCE) || 
 				key.equals(Settings.PREF_PICTURE_PER_FETCH)) {
 			startUpdateService();
+		} else if (key.equals(Settings.PREF_NO_SCROLL)) {
+			mNoScroll = prefs.getBoolean(Settings.PREF_NO_SCROLL, false);
+			setWallpaper();
 		}
 	}
 }

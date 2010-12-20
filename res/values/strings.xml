@@ -25,6 +25,9 @@
 	<string name="bc_fit_screen_title_text">Fit the screen</string>
 	<string name="bc_fit_screen_summary_text">Scale the picture to full screen</string>
 	
+	<string name="bc_no_scroll_title_text">No scrolling</string>
+	<string name="bc_no_scroll_summary_text">Always show center part of the picture</string>
+	
 	<string name="bc_network_section_text">Network settings</string>
 	<string name="bc_bg_fetch_frequency_title_text">Background fetch frequency</string>
 	<string name="bc_bg_fetch_frequency_summary_text">Interval between network connection</string>

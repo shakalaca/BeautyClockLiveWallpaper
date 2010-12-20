@@ -19,6 +19,7 @@ public class Settings extends PreferenceActivity
     public static final String PREF_RING_HOURLY = "ring_hourly";
     public static final String PREF_SAVE_COPY = "save_copy";
     public static final String PREF_FIT_SCREEN = "fit_screen";
+    public static final String PREF_NO_SCROLL = "no_scroll";
     public static final String PREF_FETCH_LARGER_PICTURE = "fetch_larger_picture";
     public static final String PREF_PICTURE_SOURCE = "picture_source";
     public static final String PREF_ENABLE_DEADWALLPAPER = "bcdw_enable";

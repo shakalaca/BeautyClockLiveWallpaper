@@ -59,6 +59,7 @@ public class LiveWallpaper extends WallpaperService {
 		private boolean mFitScreen = false;
 		private String mStorePath = null;
 		private boolean mBellHourly = false;
+		private boolean mNoScroll = false;
 
 		private boolean mRegTimeBR = false;
 		private boolean mRegScreenBR = false;
@@ -333,7 +334,7 @@ public class LiveWallpaper extends WallpaperService {
 				bIsLarge = false;
 			}
 			
-			if (isPreview()) {
+			if (isPreview() || mNoScroll) {
 				Xpos = -(width - mScreenWidth) / 2;
 				Ypos = STATUS_BAR_HEIGHT;
 			} else {
@@ -551,6 +552,7 @@ public class LiveWallpaper extends WallpaperService {
 				mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
 				mStorePath = prefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
 				mBellHourly = prefs.getBoolean(Settings.PREF_RING_HOURLY, false);
+				mNoScroll = prefs.getBoolean(Settings.PREF_NO_SCROLL, false);
 
 				return;
 			}
@@ -568,6 +570,9 @@ public class LiveWallpaper extends WallpaperService {
 					key.equals(Settings.PREF_PICTURE_SOURCE) || 
 					key.equals(Settings.PREF_PICTURE_PER_FETCH)) {
 				startUpdateService();
+			} else if (key.equals(Settings.PREF_NO_SCROLL)) {
+				mNoScroll = prefs.getBoolean(Settings.PREF_NO_SCROLL, false);
+				draw();
 			}
 		}
 	}

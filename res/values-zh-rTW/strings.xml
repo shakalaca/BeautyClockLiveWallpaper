@@ -25,6 +25,9 @@
 	<string name="bc_fit_screen_title_text">適合螢幕</string>
 	<string name="bc_fit_screen_summary_text">將圖片延展至全螢幕</string>
 	
+	<string name="bc_no_scroll_title_text">取消捲動</string>
+	<string name="bc_no_scroll_summary_text">只顯示圖片中間部分</string>
+	
 	<string name="bc_network_section_text">網路設定</string>
 	<string name="bc_bg_fetch_frequency_title_text">背景抓圖頻率</string>
 	<string name="bc_bg_fetch_frequency_summary_text">設定網路連線間隔</string>
