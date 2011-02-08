@@ -8,6 +8,14 @@ Just for fun, any questions feel free contact me :-)
 
 E-mail: shakalaca AT gmail dot com
 
+v2.4:
+* New share picture layout
+* Support wretch/新潟/鹿児島/名古屋/香川/岡山/福岡/金沢/京都/仙台/北海道
+* Add option for user to disable scrolling
+* Performance tuning
+* Fix binan & author picture source URL
+* Center picture in settings
+
 2010-09-26 v2.3:
 * Add share picture widget
 * Change UpdateService to fetch only and more power efficient
