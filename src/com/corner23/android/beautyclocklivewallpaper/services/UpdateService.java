@@ -101,11 +101,12 @@ public class UpdateService extends Service {
 	}
 	
 	private void UpdatePictures() {			
+		mCurrentCount = 0;
+		
 		// don't update on custom files..
-		if (mPictureSource != 10) {
+		if (mPictureSource != 20) {
 			Time mTime = new Time();
 			mTime.setToNow();		
-			mCurrentCount = 0;
 			
 			cancelFetchBeautyPictureTask();		
 			cancelCleanUpCacheTask();		
@@ -230,7 +231,7 @@ public class UpdateService extends Service {
 		try {
 			File mFile = new File(Environment.getExternalStorageDirectory().getPath() + "/BeautyClock/pic/.nomedia");
 			if (mFile != null && !mFile.exists()) {
-				mFile.getParentFile().mkdirs();
+				mFile.mkdirs();
 				mFile.createNewFile();
 			}
 		} catch (IOException e) {
