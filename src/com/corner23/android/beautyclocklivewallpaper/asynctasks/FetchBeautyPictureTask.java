@@ -224,7 +224,9 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		}
 		
 		try {
-			new_file.getParentFile().mkdirs();
+			if (!new_file.getParentFile().exists()) {
+				new_file.mkdirs();
+			}
 			FileOutputStream out = new FileOutputStream(new_file);
 			out.write(bitmap, 0, bitmap.length);
 			out.flush();
