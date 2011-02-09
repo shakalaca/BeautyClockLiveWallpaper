@@ -205,6 +205,9 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 			}
 		}
 		
+		if (mBeautyBitmap != null) {
+			mBeautyBitmap.recycle();
+		}
 		mBeautyBitmap = BitmapFactory.decodeFile(fname);
 	}
 	
@@ -255,6 +258,7 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 				Xpos = 0;
 			}
 			Bitmap tmpBitmap = Bitmap.createScaledBitmap(mBeautyBitmap, width, height, true);
+			mBeautyBitmap.recycle();
 			mBeautyBitmap = Bitmap.createBitmap(tmpBitmap, Xpos, 0, mScreenWidth, height);
 			mBitmapHeight = mScreenHeight;
 			mBitmapWidth = mScreenWidth;

@@ -259,6 +259,9 @@ public class LiveWallpaper extends WallpaperService {
 			
 			Bitmap bitmap = BitmapFactory.decodeFile(fname);
 			if (bitmap != null) {
+				if (mBeautyBitmap != null) {
+					mBeautyBitmap.recycle();
+				}
 				mBeautyBitmap = ResizeBitmap(bitmap);
 			}
 		}
