@@ -58,6 +58,7 @@
 		<item>Bijin-tokei (京都)</item>
 		<item>Bijin-tokei (仙台)</item>
 		<item>Bijin-tokei (北海道)</item>
+		<item>Bijin-tokei (早稲田)</item>
 		<item>Bijin-tokei (GAL)</item>
 		<item>Bijin-tokei (サーキット)</item>
 		<item>Binan-tokei</item>
@@ -83,6 +84,7 @@
 		<item>Bijin-tokei (京都)</item>
 		<item>Bijin-tokei (仙台)</item>
 		<item>Bijin-tokei (北海道)</item>
+		<item>Bijin-tokei (早稲田)</item>
 		<item>Bijin-tokei (GAL)</item>
 		<item>Bijin-tokei (サーキット)</item>
 		<item>Binan-tokei</item>
@@ -107,6 +109,7 @@
 		<item>Bijin-tokei (kyoto)</item>
 		<item>Bijin-tokei (sendai)</item>
 		<item>Bijin-tokei (hokkaido)</item>
+		<item>Bijin-tokei (wasedastyle)</item>
 		<item>Bijin-tokei (GAL)</item>
 		<item>Bijin-tokei (circuit)</item>
 		<item>Binan-tokei</item>
@@ -138,6 +141,7 @@
 		<item>19</item>	
 		<item>20</item>	
 		<item>21</item>	
+		<item>22</item>	
 	</string-array>
 	
 	<string-array name="bc_fetch_frequency_entries">

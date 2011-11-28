@@ -104,7 +104,7 @@ public class UpdateService extends Service {
 		mCurrentCount = 0;
 		
 		// don't update on custom files..
-		if (mPictureSource != 20) {
+		if (mPictureSource != 21) {
 			Time mTime = new Time();
 			mTime.setToNow();		
 			

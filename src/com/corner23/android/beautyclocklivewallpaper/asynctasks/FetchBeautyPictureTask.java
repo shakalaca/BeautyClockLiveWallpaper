@@ -65,6 +65,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 	private static final String BIJIN_KYOTO_PICTURE_URL = "http://www.bijint.com/kyoto/tokei_images/%02d%02d.jpg";
 	private static final String BIJIN_SENDAI_PICTURE_URL = "http://www.bijint.com/sendai/tokei_images/%02d%02d.jpg";
 	private static final String BIJIN_HOKKAIDO_PICTURE_URL = "http://www.bijint.com/hokkaido/tokei_images/%02d%02d.jpg";
+	private static final String BIJIN_WASEDASTYLE_PICTURE_URL = "http://www.bijint.com/wasedastyle/tokei_images/%02d%02d.jpg";
 
 	private static final String LOVELY_TIME_PICTURE_URL = "http://gameflier.lovelytime.com.tw/photo/%02d%02d.JPG";
 	private static final String WRETCH_PICTURE_URL = "http://tw.yimg.com/i/tw/wretch/beautyclockweb/%02d%02d.jpg";
@@ -96,6 +97,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 	private static final String BIJIN_KYOTO_PICTURE = "kyoto";
 	private static final String BIJIN_SENDAI_PICTURE = "sendai";
 	private static final String BIJIN_HOKKAIDO_PICTURE = "hokkaido";
+	private static final String BIJIN_WASEDASTYLE_PICTURE = "wasedastyle";
 	
 	private static final String LOVELY_TIME_PICTURE = "lovely";
 	private static final String WRETCH_PICTURE = "wretch";
@@ -150,13 +152,14 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		case 12: URLstr = String.format(SDCARD_BASE_PATH, BIJIN_KYOTO_PICTURE, mHour, mMinute); break;
 		case 13: URLstr = String.format(SDCARD_BASE_PATH, BIJIN_SENDAI_PICTURE, mHour, mMinute); break;
 		case 14: URLstr = String.format(SDCARD_BASE_PATH, BIJIN_HOKKAIDO_PICTURE, mHour, mMinute); break;
-		case 15: URLstr = String.format(SDCARD_BASE_PATH, mFetchLargerPicture ? BIJIN_GAL_PICTURE_L : BIJIN_GAL_PICTURE, mHour, mMinute); break;
-		case 16: URLstr = String.format(SDCARD_BASE_PATH, BIJIN_CC_PICTURE, mHour, mMinute); break;
-		case 17: URLstr = String.format(SDCARD_BASE_PATH, mFetchLargerPicture ? BINAN_PICTURE_L : BINAN_PICTURE, mHour, mMinute); break;
-		case 18: URLstr = String.format(SDCARD_BASE_PATH, LOVELY_TIME_PICTURE, mHour, mMinute); break;
-		case 19: URLstr = String.format(SDCARD_BASE_PATH, mFetchLargerPicture ? WRETCH_PICTURE_L : WRETCH_PICTURE, mHour, mMinute); break;
-		case 20: URLstr = String.format(SDCARD_BASE_PATH, CUSTOM_PICTURE, mHour, mMinute); break;
-		case 21: URLstr = String.format(SDCARD_BASE_PATH, AVTOKEI_PICTURE, mHour, mMinute); break;
+		case 15: URLstr = String.format(SDCARD_BASE_PATH, BIJIN_WASEDASTYLE_PICTURE, mHour, mMinute); break;
+		case 16: URLstr = String.format(SDCARD_BASE_PATH, mFetchLargerPicture ? BIJIN_GAL_PICTURE_L : BIJIN_GAL_PICTURE, mHour, mMinute); break;
+		case 17: URLstr = String.format(SDCARD_BASE_PATH, BIJIN_CC_PICTURE, mHour, mMinute); break;
+		case 18: URLstr = String.format(SDCARD_BASE_PATH, mFetchLargerPicture ? BINAN_PICTURE_L : BINAN_PICTURE, mHour, mMinute); break;
+		case 19: URLstr = String.format(SDCARD_BASE_PATH, LOVELY_TIME_PICTURE, mHour, mMinute); break;
+		case 20: URLstr = String.format(SDCARD_BASE_PATH, mFetchLargerPicture ? WRETCH_PICTURE_L : WRETCH_PICTURE, mHour, mMinute); break;
+		case 21: URLstr = String.format(SDCARD_BASE_PATH, CUSTOM_PICTURE, mHour, mMinute); break;
+		case 22: URLstr = String.format(SDCARD_BASE_PATH, AVTOKEI_PICTURE, mHour, mMinute); break;
 		}
 		
 		return URLstr;
@@ -181,12 +184,13 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		case 12: URLstr = String.format(BIJIN_KYOTO_PICTURE_URL, mHour, mMinute); break;
 		case 13: URLstr = String.format(BIJIN_SENDAI_PICTURE_URL, mHour, mMinute); break;
 		case 14: URLstr = String.format(BIJIN_HOKKAIDO_PICTURE_URL, mHour, mMinute); break;
-		case 15: URLstr = String.format(mFetchLargerPicture ? BIJIN_GAL_PICTURE_URL_L : BIJIN_GAL_PICTURE_URL, mHour, mMinute); break;
-		case 16: URLstr = String.format(BIJIN_CC_PICTURE_URL, mHour, mMinute); break;
-		case 17: URLstr = String.format(mFetchLargerPicture ? BINAN_PICTURE_URL_L : BINAN_PICTURE_URL, mHour, mMinute); break;
-		case 18: URLstr = String.format(LOVELY_TIME_PICTURE_URL, mHour, mMinute); break;
-		case 19: URLstr = String.format(mFetchLargerPicture ? WRETCH_PICTURE_URL_L : WRETCH_PICTURE_URL, mHour, mMinute); break;
-		case 21: URLstr = String.format(AVTOKEI_PICTURE_URL, mHour, mHour, mMinute); break;
+		case 15: URLstr = String.format(BIJIN_WASEDASTYLE_PICTURE_URL, mHour, mMinute); break;
+		case 16: URLstr = String.format(mFetchLargerPicture ? BIJIN_GAL_PICTURE_URL_L : BIJIN_GAL_PICTURE_URL, mHour, mMinute); break;
+		case 17: URLstr = String.format(BIJIN_CC_PICTURE_URL, mHour, mMinute); break;
+		case 18: URLstr = String.format(mFetchLargerPicture ? BINAN_PICTURE_URL_L : BINAN_PICTURE_URL, mHour, mMinute); break;
+		case 19: URLstr = String.format(LOVELY_TIME_PICTURE_URL, mHour, mMinute); break;
+		case 20: URLstr = String.format(mFetchLargerPicture ? WRETCH_PICTURE_URL_L : WRETCH_PICTURE_URL, mHour, mMinute); break;
+		case 22: URLstr = String.format(AVTOKEI_PICTURE_URL, mHour, mHour, mMinute); break;
 		}
 		
 		return URLstr;
@@ -208,10 +212,11 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		case 12: referer = "http://www.bijint.com/kyoto/"; break;
 		case 13: referer = "http://www.bijint.com/sendai/"; break;
 		case 14: referer = "http://www.bijint.com/hokkaido/"; break;
-		case 15: referer = "http://gal.bijint.com/"; break;
-		case 16: referer = "http://www.bijint.com/cc/"; break;
-		case 17: referer = "http://www.bijint.com/binan/"; break;
-		case 21: referer = "http://www.avtokei.jp/index.html"; break;
+		case 15: referer = "http://www.bijint.com/wasedastyle/"; break;
+		case 16: referer = "http://gal.bijint.com/"; break;
+		case 17: referer = "http://www.bijint.com/cc/"; break;
+		case 18: referer = "http://www.bijint.com/binan/"; break;
+		case 22: referer = "http://www.avtokei.jp/index.html"; break;
 		}
 		
 		return referer;
