@@ -89,9 +89,9 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 				String tz = intent.getStringExtra("time-zone");
 				mTime = new Time(TimeZone.getTimeZone(tz).getID());
 				
-				startUpdateService();
+				startService(new Intent(context, UpdateService.class));
 			} else if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
-				startUpdateService();
+				startService(new Intent(context, UpdateService.class));
 			} else {
 				// normal tick, get time
 				mTime.setToNow();
@@ -174,19 +174,6 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		}
 	}
 	
-	private void startUpdateService() {
-		Intent intent = new Intent(DeadWallpaper.this, UpdateService.class);
-		startService(intent);		
-	}
-	
-	private void startUpdateServiceWithTime(int hour, int minute) {
-		Intent intent = new Intent(DeadWallpaper.this, UpdateService.class);
-		intent.putExtra("fetch_pictures", true);
-		intent.putExtra("hour", hour);
-		intent.putExtra("minute", minute);
-		startService(intent);		
-	}
-	
 	private void updateBeautyBitmap() {
 		mTime.setToNow();		
 		int hour = mTime.hour;
@@ -200,7 +187,11 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 
 			File _f_cache = new File(fname);
 			if (!_f_cache.exists()) {
-				startUpdateServiceWithTime(hour, minute);
+				Intent intent = new Intent(this, UpdateService.class);
+				intent.putExtra("fetch_pictures", true);
+				intent.putExtra("hour", hour);
+				intent.putExtra("minute", minute);
+				startService(intent);		
 				return;
 			}
 		}
@@ -363,6 +354,7 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 		if (key == null) {
 			mFitScreen = prefs.getBoolean(Settings.PREF_FIT_SCREEN, false);
 			mStorePath = prefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
+			mBellHourly = prefs.getBoolean(Settings.PREF_RING_HOURLY, false);
 			mNoScroll = prefs.getBoolean(Settings.PREF_NO_SCROLL, false);
 			
 			return;
@@ -379,7 +371,7 @@ public class DeadWallpaper extends Service implements SharedPreferences.OnShared
 				key.equals(Settings.PREF_FETCH_LARGER_PICTURE) || 
 				key.equals(Settings.PREF_PICTURE_SOURCE) || 
 				key.equals(Settings.PREF_PICTURE_PER_FETCH)) {
-			startUpdateService();
+			startService(new Intent(this, UpdateService.class));
 		} else if (key.equals(Settings.PREF_NO_SCROLL)) {
 			mNoScroll = prefs.getBoolean(Settings.PREF_NO_SCROLL, false);
 			setWallpaper();
