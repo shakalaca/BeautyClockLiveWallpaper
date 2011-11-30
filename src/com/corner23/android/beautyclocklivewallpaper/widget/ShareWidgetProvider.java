@@ -25,7 +25,7 @@ public class ShareWidgetProvider extends AppWidgetProvider {
 			Intent intent = new Intent(context, SharePicture.class);
 			PendingIntent pi = PendingIntent.getActivity(context, 0, intent, 0);
 			
-			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.share_widget_layout);
+			RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.share_widget_layout3);
 			views.setOnClickPendingIntent(R.id.ShareWidget, pi);
 			
 			// Tell the AppWidgetManager to perform an update on the current App Widget
