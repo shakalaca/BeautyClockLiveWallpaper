@@ -18,9 +18,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.IBinder;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 public class WidgetService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -34,6 +36,7 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 	private int mScreenWidth = 0;
 	
 	private SharedPreferences mPrefs;
+	private File PictureFile = null;
 	
 	private boolean mRegScreenBR = false;
 	private boolean mRegTimeBR = false;
@@ -148,6 +151,7 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		// check SD card first
 		String fname = String.format("%s/%02d%02d.jpg", storePath, hour, minute);
 		File _f_sdcard = new File(fname);
+		PictureFile = _f_sdcard;
 		if (!_f_sdcard.exists()) {
 			fname = String.format("%s/%02d%02d.jpg", getCacheDir().getAbsolutePath(), hour, minute);
 			File _f_cache = new File(fname);
@@ -160,6 +164,7 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 				
 				return null;
 			}
+			PictureFile = _f_cache;
 		}
 		
 		Log.d(TAG, fname);
@@ -231,6 +236,7 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		Bitmap bitmap = updateBeautyBitmap();
 		if (bitmap == null) {
 			remoteViews.setImageViewResource(R.id.BeautyClockImageView, R.drawable.beautyclock_retry);
+			remoteViews.setViewVisibility(R.id.ShareIt, View.GONE);
 		} else {
 //			Bitmap bitmap_scaled = ResizeBitmap(bitmap);
 //			if (bitmap_scaled != null) {
@@ -238,6 +244,16 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 //			} else {
 				remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap);
 //			}
+				
+			Intent shareIntent = new Intent(Intent.ACTION_SEND);
+			shareIntent.setType("image/jpeg");
+			shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(PictureFile));
+			shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.share_picture_subject_text));
+			shareIntent.putExtra(Intent.EXTRA_TEXT, context.getResources().getString(R.string.share_picture_msg_text));
+			shareIntent.putExtra(Intent.EXTRA_TITLE, context.getResources().getString(R.string.share_picture_title_text));
+			PendingIntent pi_share = PendingIntent.getActivity(context, 0, shareIntent, 0);
+
+			remoteViews.setOnClickPendingIntent(R.id.ShareIt, pi_share);					
 		}
 		
 		awm.updateAppWidget(remoteWidget, remoteViews);
