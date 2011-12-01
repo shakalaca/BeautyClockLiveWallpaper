@@ -106,6 +106,7 @@ public class WidgetProvider extends AppWidgetProvider {
 				PendingIntent pi_share = PendingIntent.getActivity(context, 0, shareIntent, 0);
 
 				views.setOnClickPendingIntent(R.id.ShareIt, pi_share);
+				views.setViewVisibility(R.id.ShareIt, View.VISIBLE);
 			}
 			
 			// Tell the AppWidgetManager to perform an update on the current App Widget

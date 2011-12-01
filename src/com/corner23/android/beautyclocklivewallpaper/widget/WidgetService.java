@@ -254,6 +254,7 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 			PendingIntent pi_share = PendingIntent.getActivity(context, 0, shareIntent, 0);
 
 			remoteViews.setOnClickPendingIntent(R.id.ShareIt, pi_share);					
+			remoteViews.setViewVisibility(R.id.ShareIt, View.VISIBLE);
 		}
 		
 		awm.updateAppWidget(remoteWidget, remoteViews);
