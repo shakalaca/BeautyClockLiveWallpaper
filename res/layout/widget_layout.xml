@@ -2,14 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:background="@drawable/beautyclock_widget_bg"
 	android:layout_height="wrap_content" 
-    android:layout_width="wrap_content"
-    android:layout_gravity="center" >
+    android:layout_width="wrap_content">
 	<LinearLayout 
-	    android:layout_alignParentTop="true"
-		android:layout_marginTop="48dp"
+	    android:paddingTop="48dp"
 		android:layout_height="wrap_content" 
 		android:layout_width="wrap_content" 
-		android:orientation="vertical" 
+		android:orientation="vertical"
+		android:layout_centerInParent="true"
 		android:minWidth="240dp">
 		<ImageView 
 		    android:id="@+id/BeautyClockImageView"
@@ -34,8 +33,8 @@
 	    android:id="@+id/ShareIt"
 	    android:layout_alignParentRight="true"
 	    android:layout_alignParentBottom="true"
-		android:layout_height="24dp" 
-	    android:layout_width="24dp"
+		android:layout_height="36dp" 
+	    android:layout_width="36dp"
 		android:layout_marginLeft="6dp" 
 		android:layout_marginBottom="6dp" 
 	    android:background="@drawable/share" />
