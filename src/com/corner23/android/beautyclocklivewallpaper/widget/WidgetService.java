@@ -238,12 +238,12 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 			remoteViews.setImageViewResource(R.id.BeautyClockImageView, R.drawable.beautyclock_retry);
 			remoteViews.setViewVisibility(R.id.ShareIt, View.GONE);
 		} else {
-//			Bitmap bitmap_scaled = ResizeBitmap(bitmap);
-//			if (bitmap_scaled != null) {
-//				remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap_scaled);
-//			} else {
+			Bitmap bitmap_scaled = ResizeBitmap(bitmap);
+			if (bitmap_scaled != null) {
+				remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap_scaled);
+			} else {
 				remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap);
-//			}
+			}
 				
 			Intent shareIntent = new Intent(Intent.ACTION_SEND);
 			shareIntent.setType("image/jpeg");
