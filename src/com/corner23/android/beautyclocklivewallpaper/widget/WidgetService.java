@@ -36,7 +36,6 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 	private int mScreenWidth = 0;
 	
 	private SharedPreferences mPrefs;
-	private File PictureFile = null;
 	
 	private boolean mRegScreenBR = false;
 	private boolean mRegTimeBR = false;
@@ -141,7 +140,7 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		}
 	}
 	
-	private Bitmap updateBeautyBitmap() {
+	private String getPicturePath() {
 		mTime.setToNow();		
 		int hour = mTime.hour;
 		int minute = mTime.minute;
@@ -151,7 +150,6 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		// check SD card first
 		String fname = String.format("%s/%02d%02d.jpg", storePath, hour, minute);
 		File _f_sdcard = new File(fname);
-		PictureFile = _f_sdcard;
 		if (!_f_sdcard.exists()) {
 			fname = String.format("%s/%02d%02d.jpg", getCacheDir().getAbsolutePath(), hour, minute);
 			File _f_cache = new File(fname);
@@ -164,22 +162,22 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 				
 				return null;
 			}
-			PictureFile = _f_cache;
 		}
 		
 		Log.d(TAG, fname);
-		return BitmapFactory.decodeFile(fname);
+		return fname;
 	}
 
 	private Bitmap ResizeBitmap(Bitmap bitmap) {
 		if (bitmap == null) {
-			Log.d(TAG, "null !");
+			Log.d(TAG, "NULL Bitmap !");
 			return null;
 		}
 		
 		int width = bitmap.getWidth();
 		int height = bitmap.getHeight();
 		if (width == 0 || height == 0) {
+			Log.d(TAG, "Bitmap format error !");
 			return null;
 		}
 		
@@ -187,30 +185,13 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 			return null;
 		}
 				
-		int maxWidth = mScreenWidth;
-		int maxHeight = mScreenHeight;
-/*		
-		if (height > maxHeight) {
-			double ratio = (double) maxHeight / height;
-			height = maxHeight;
-			width = (int) (width * ratio);
-			bScaled = true;
-		}
-		
-		if (width > maxWidth) {
-			double ratio = (double) maxWidth / width;
-			width = maxWidth;
-			height = (int) (height * ratio);
-			bScaled = true;
-		}
-*/
 		if (height > width) {
-			double ratio = (double) maxHeight / height;
-			height = maxHeight;
+			double ratio = (double) mScreenHeight / height;
+			height = mScreenHeight;
 			width = (int) (width * ratio);
 		} else {
-			double ratio = (double) maxWidth / width;
-			width = maxWidth;
+			double ratio = (double) mScreenWidth / width;
+			width = mScreenWidth;
 			height = (int) (height * ratio);
 		}
 		
@@ -231,12 +212,14 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		
 		remoteViews.setTextViewText(R.id.TimeTextView, String.format(DISPLAYTIME_FORMAT, mTime.hour, mTime.minute));
 		remoteViews.setOnClickPendingIntent(R.id.BeautyClockImageView, pendingIntent);
+		remoteViews.setViewVisibility(R.id.ShareIt, View.GONE);
 		
-		Bitmap bitmap = updateBeautyBitmap();
-		if (bitmap == null) {
+		String fname = getPicturePath();
+		if (fname == null) {
 			remoteViews.setImageViewResource(R.id.BeautyClockImageView, R.drawable.beautyclock_retry);
-			remoteViews.setViewVisibility(R.id.ShareIt, View.GONE);
 		} else {
+			File PictureFile = new File(fname);
+			Bitmap bitmap = BitmapFactory.decodeFile(fname);
 			Bitmap bitmap_scaled = ResizeBitmap(bitmap);
 			if (bitmap_scaled != null) {
 				remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap_scaled);
