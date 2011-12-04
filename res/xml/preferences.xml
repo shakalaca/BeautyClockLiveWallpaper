@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<PreferenceCategory android:title="@string/bc_dead_live_wallpaper_section_text">
+	<PreferenceCategory android:title="@string/bc_dead_live_wallpaper_section_text" android:key="bcdw_section">
 		<CheckBoxPreference android:key="bcdw_enable" 
 			android:title="@string/bc_enable_deadwallpaper_title_text"
 			android:summary="@string/bc_enable_deadwallpaper_summary_text"

@@ -6,9 +6,11 @@ import com.corner23.android.beautyclocklivewallpaper.services.DeadWallpaper;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 
 public class Settings extends PreferenceActivity 
 	implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -37,13 +39,14 @@ public class Settings extends PreferenceActivity
 	        addPreferencesFromResource(R.xml.preferences);
 		}
 /*		
-        Preference enable_dead_lw = this.findPreference(PREF_ENABLE_DEADWALLPAPER);
-        if (enable_dead_lw != null) {
-        	if (Double.parseDouble(android.os.Build.VERSION.RELEASE) >= 2.1) {
-        		enable_dead_lw.setEnabled(false);
-    }
-}
+		PreferenceCategory bcdw_section = (PreferenceCategory) findPreference("bcdw_section");
+		if (bcdw_section != null) {
+			if (Build.VERSION.SDK_INT >= 11) {
+				getPreferenceScreen().removePreference(bcdw_section);
+			}
+		}
 */        
+		
         getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);        
     }
     
