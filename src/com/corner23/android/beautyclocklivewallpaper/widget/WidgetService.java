@@ -171,7 +171,6 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		return BitmapFactory.decodeFile(fname);
 	}
 
-	@SuppressWarnings("unused")
 	private Bitmap ResizeBitmap(Bitmap bitmap) {
 		if (bitmap == null) {
 			Log.d(TAG, "null !");
@@ -188,8 +187,8 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 			return null;
 		}
 				
-		int maxWidth = (int) (mScreenWidth * 0.9);
-		int maxHeight = (int) (mScreenHeight * 0.7);
+		int maxWidth = mScreenWidth;
+		int maxHeight = mScreenHeight;
 /*		
 		if (height > maxHeight) {
 			double ratio = (double) maxHeight / height;
@@ -298,8 +297,9 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i(TAG, "onStartCommand");
 		
-        mScreenHeight = getResources().getDisplayMetrics().heightPixels;
-		mScreenWidth = getResources().getDisplayMetrics().widthPixels;
+		int max_size = 4 * 74 - 2; // refer to http://developer.android.com/guide/topics/appwidgets/index.html
+        mScreenHeight = (int) (max_size * getResources().getDisplayMetrics().density);
+		mScreenWidth = (int) (max_size * getResources().getDisplayMetrics().density);
 		
 		updateWidget(this);
 		
