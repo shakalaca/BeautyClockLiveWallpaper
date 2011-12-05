@@ -5,7 +5,11 @@
       android:versionName="2.5">
     <uses-sdk android:minSdkVersion="7" />
     
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" 
+        android:backupAgent="BeautyClockBackupAgent" android:restoreAnyVersion="true">
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+			android:value="AEdPqrEAAAAIeyDlW_yJf0pWlIHSYmYcXMXe9SVTYeZjP-mKDA" />
 		<receiver android:name=".BootReceiver">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
