@@ -158,8 +158,8 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		case 18: URLstr = String.format(SDCARD_BASE_PATH, mFetchLargerPicture ? BINAN_PICTURE_L : BINAN_PICTURE, mHour, mMinute); break;
 		case 19: URLstr = String.format(SDCARD_BASE_PATH, LOVELY_TIME_PICTURE, mHour, mMinute); break;
 		case 20: URLstr = String.format(SDCARD_BASE_PATH, mFetchLargerPicture ? WRETCH_PICTURE_L : WRETCH_PICTURE, mHour, mMinute); break;
-		case 21: URLstr = String.format(SDCARD_BASE_PATH, CUSTOM_PICTURE, mHour, mMinute); break;
-		case 22: URLstr = String.format(SDCARD_BASE_PATH, AVTOKEI_PICTURE, mHour, mMinute); break;
+		case 98: URLstr = String.format(SDCARD_BASE_PATH, CUSTOM_PICTURE, mHour, mMinute); break;
+		case 99: URLstr = String.format(SDCARD_BASE_PATH, AVTOKEI_PICTURE, mHour, mMinute); break;
 		}
 		
 		return URLstr;
@@ -190,7 +190,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		case 18: URLstr = String.format(mFetchLargerPicture ? BINAN_PICTURE_URL_L : BINAN_PICTURE_URL, mHour, mMinute); break;
 		case 19: URLstr = String.format(LOVELY_TIME_PICTURE_URL, mHour, mMinute); break;
 		case 20: URLstr = String.format(mFetchLargerPicture ? WRETCH_PICTURE_URL_L : WRETCH_PICTURE_URL, mHour, mMinute); break;
-		case 22: URLstr = String.format(AVTOKEI_PICTURE_URL, mHour, mHour, mMinute); break;
+		case 99: URLstr = String.format(AVTOKEI_PICTURE_URL, mHour, mHour, mMinute); break;
 		}
 		
 		return URLstr;
@@ -216,7 +216,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 		case 16: referer = "http://gal.bijint.com/"; break;
 		case 17: referer = "http://www.bijint.com/cc/"; break;
 		case 18: referer = "http://www.bijint.com/binan/"; break;
-		case 22: referer = "http://www.avtokei.jp/index.html"; break;
+		case 99: referer = "http://www.avtokei.jp/index.html"; break;
 		}
 		
 		return referer;
@@ -410,6 +410,15 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 	protected void onCancelled() {
 		super.onCancelled();
 		bCancel = true;
+	}
+
+	@Override
+	protected void onPreExecute() {
+		super.onPreExecute();
+		
+		if (mPictureSource == Settings.ID_CUSTOM_TOKEI) {
+			this.cancel(true);
+		}
 	}
 }
 	

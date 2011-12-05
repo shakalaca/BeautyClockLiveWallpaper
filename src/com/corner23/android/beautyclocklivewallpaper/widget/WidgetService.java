@@ -146,6 +146,7 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		int minute = mTime.minute;
 
 		String storePath = mPrefs.getString(Settings.PREF_INTERNAL_PICTURE_PATH, "");
+		int source = Integer.parseInt(mPrefs.getString(Settings.PREF_PICTURE_SOURCE, "0"));
 
 		// check SD card first
 		String fname = String.format("%s/%02d%02d.jpg", storePath, hour, minute);
@@ -153,7 +154,7 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		if (!_f_sdcard.exists()) {
 			fname = String.format("%s/%02d%02d.jpg", getCacheDir().getAbsolutePath(), hour, minute);
 			File _f_cache = new File(fname);
-			if (!_f_cache.exists()) {
+			if (!_f_cache.exists() && source != Settings.ID_CUSTOM_TOKEI) {
 				Intent intent = new Intent(this, UpdateService.class);
 				intent.putExtra("fetch_pictures", true);
 				intent.putExtra("hour", hour);

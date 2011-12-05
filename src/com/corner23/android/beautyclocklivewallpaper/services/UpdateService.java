@@ -103,8 +103,9 @@ public class UpdateService extends Service {
 	private void UpdatePictures() {			
 		mCurrentCount = 0;
 		
+		Log.d(TAG, "mPictureSource: " + mPictureSource);
 		// don't update on custom files..
-		if (mPictureSource != 21) {
+		if (mPictureSource != Settings.ID_CUSTOM_TOKEI) {
 			Time mTime = new Time();
 			mTime.setToNow();		
 			
@@ -155,13 +156,16 @@ public class UpdateService extends Service {
 		if (intent != null) {
 			// from CacheCleanUpTask
 			if (intent.hasExtra("fetch_pictures")) {
+				Log.d(TAG, "Finish clean up, fetch pictures..");
 				// get exact start time
 				mHour = intent.getIntExtra("hour", 0);
 				mMinute = intent.getIntExtra("minute", 0);
 				
 				readDefaultPrefs(mPrefs);
 		    	
-				startToFetchBeautyPictureTask();
+				if (mPictureSource != Settings.ID_CUSTOM_TOKEI) {
+					startToFetchBeautyPictureTask();
+				}
 			// from FetchBeautyPictureTask
 			} else if (intent.hasExtra("fetch_pictures_ret")) {
 				boolean timeout = intent.getBooleanExtra("timeout", false);
@@ -210,6 +214,8 @@ public class UpdateService extends Service {
 				}
 			// do a full refresh
 			} else {
+				Log.d(TAG, "full refresh");
+				readDefaultPrefs(mPrefs);
 				UpdatePictures();
 			}
 		}

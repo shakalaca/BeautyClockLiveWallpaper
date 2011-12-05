@@ -28,6 +28,8 @@ public class Settings extends PreferenceActivity
     public static final String PREF_PICTURE_PER_FETCH = "picture_per_fetch";
     public static final String PREF_INTERNAL_PICTURE_PATH = "picture_path";
     
+    public static final int ID_CUSTOM_TOKEI = 98;
+    
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
