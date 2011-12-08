@@ -27,7 +27,10 @@
 	
 	<string name="bc_no_scroll_title_text">No scrolling</string>
 	<string name="bc_no_scroll_summary_text">Always show center part of the picture</string>
-	
+
+	<string name="bc_anotherway_update_widget_title_text">New way update widget</string>
+	<string name="bc_anotherway_update_widget_summary_text">If there\'s problem showing picture with the widget, try this option</string>
+	    	
 	<string name="bc_network_section_text">Network settings</string>
 	<string name="bc_bg_fetch_frequency_title_text">Background fetch frequency</string>
 	<string name="bc_bg_fetch_frequency_summary_text">Interval between network connection</string>

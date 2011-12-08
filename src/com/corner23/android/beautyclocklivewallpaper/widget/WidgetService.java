@@ -36,10 +36,13 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 	private int mScreenWidth = 0;
 	
 	private SharedPreferences mPrefs;
+	private boolean mAnotherWayUpdatWidget = false;
 	
 	private boolean mRegScreenBR = false;
 	private boolean mRegTimeBR = false;
 	private boolean mRegUpdateBR = false;
+	
+	private boolean mFirstTimeUpdate = true;
 		
 	private final BroadcastReceiver mWallpaperUpdateBroadcastReceiver = new BroadcastReceiver() {
 
@@ -206,41 +209,52 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		ComponentName remoteWidget = new ComponentName(context, WidgetProvider.class);		
 		RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
 		
-		mTime.setToNow();
-		
-		Intent intent = new Intent(context, Settings.class);
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-		
-		remoteViews.setTextViewText(R.id.TimeTextView, String.format(DISPLAYTIME_FORMAT, mTime.hour, mTime.minute));
-		remoteViews.setOnClickPendingIntent(R.id.BeautyClockImageView, pendingIntent);
-		remoteViews.setViewVisibility(R.id.ShareIt, View.GONE);
-		
-		String fname = getPicturePath();
-		if (fname == null) {
+		if (awm != null && remoteWidget != null && remoteViews != null) {
+			mTime.setToNow();
+			
+			Intent intent = new Intent(context, Settings.class);
+			PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+			
+			remoteViews.setTextViewText(R.id.TimeTextView, String.format(DISPLAYTIME_FORMAT, mTime.hour, mTime.minute));
+			remoteViews.setOnClickPendingIntent(R.id.BeautyClockImageView, pendingIntent);
 			remoteViews.setImageViewResource(R.id.BeautyClockImageView, R.drawable.beautyclock_retry);
-		} else {
-			File PictureFile = new File(fname);
-			Bitmap bitmap = BitmapFactory.decodeFile(fname);
-			Bitmap bitmap_scaled = ResizeBitmap(bitmap);
-			if (bitmap_scaled != null) {
-				remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap_scaled);
+			remoteViews.setViewVisibility(R.id.ShareIt, View.GONE);
+			
+			if (mFirstTimeUpdate) {
+				mFirstTimeUpdate = false;
 			} else {
-				remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap);
-			}
+			String fname = getPicturePath();
+			if (fname != null) {
+				Uri pictureUri = Uri.fromFile(new File(fname));
+				if (mAnotherWayUpdatWidget) {
+					remoteViews.setImageViewUri(R.id.BeautyClockImageView, pictureUri);
+				} else {
+					Bitmap bitmap = BitmapFactory.decodeFile(fname);
+					Bitmap bitmap_scaled = ResizeBitmap(bitmap);
+					if (bitmap_scaled != null) {
+						Log.d(TAG, "scaled");
+						remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap_scaled);
+					} else {
+						Log.d(TAG, "original");
+						remoteViews.setImageViewBitmap(R.id.BeautyClockImageView, bitmap);
+					}
+				}
 				
-			Intent shareIntent = new Intent(Intent.ACTION_SEND);
-			shareIntent.setType("image/jpeg");
-			shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(PictureFile));
-			shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.share_picture_subject_text));
-			shareIntent.putExtra(Intent.EXTRA_TEXT, context.getResources().getString(R.string.share_picture_msg_text));
-			shareIntent.putExtra(Intent.EXTRA_TITLE, context.getResources().getString(R.string.share_picture_title_text));
-			PendingIntent pi_share = PendingIntent.getActivity(context, 0, shareIntent, 0);
-
-			remoteViews.setOnClickPendingIntent(R.id.ShareIt, pi_share);					
-			remoteViews.setViewVisibility(R.id.ShareIt, View.VISIBLE);
+				Intent shareIntent = new Intent(Intent.ACTION_SEND);
+				shareIntent.setType("image/jpeg");
+				shareIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
+				shareIntent.putExtra(Intent.EXTRA_SUBJECT, context.getResources().getString(R.string.share_picture_subject_text));
+				shareIntent.putExtra(Intent.EXTRA_TEXT, context.getResources().getString(R.string.share_picture_msg_text));
+				shareIntent.putExtra(Intent.EXTRA_TITLE, context.getResources().getString(R.string.share_picture_title_text));
+				PendingIntent pi_share = PendingIntent.getActivity(context, 0, shareIntent, 0);
+	
+				remoteViews.setOnClickPendingIntent(R.id.ShareIt, pi_share);					
+				remoteViews.setViewVisibility(R.id.ShareIt, View.VISIBLE);
+			}
+			}
+			
+			awm.updateAppWidget(remoteWidget, remoteViews);
 		}
-		
-		awm.updateAppWidget(remoteWidget, remoteViews);
 	}
 
 	@Override
@@ -257,6 +271,10 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 		mPrefs = getSharedPreferences(Settings.SHARED_PREFS_NAME, 0);
     	mPrefs.registerOnSharedPreferenceChangeListener(this);
     	onSharedPreferenceChanged(mPrefs, null);		
+    	
+		int max_size = 4 * 74 - 2; // refer to http://developer.android.com/guide/topics/appwidgets/index.html
+        mScreenHeight = (int) (max_size * getResources().getDisplayMetrics().density);
+		mScreenWidth = (int) (max_size * getResources().getDisplayMetrics().density);
     	
 		startService(new Intent(this, UpdateService.class));
 	}
@@ -281,10 +299,6 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		Log.i(TAG, "onStartCommand");
 		
-		int max_size = 4 * 74 - 2; // refer to http://developer.android.com/guide/topics/appwidgets/index.html
-        mScreenHeight = (int) (max_size * getResources().getDisplayMetrics().density);
-		mScreenWidth = (int) (max_size * getResources().getDisplayMetrics().density);
-		
 		updateWidget(this);
 		
 		return START_STICKY;
@@ -308,7 +322,11 @@ public class WidgetService extends Service implements SharedPreferences.OnShared
 				key.equals(Settings.PREF_FETCH_LARGER_PICTURE) || 
 				key.equals(Settings.PREF_PICTURE_SOURCE) || 
 				key.equals(Settings.PREF_PICTURE_PER_FETCH)) {
+			mFirstTimeUpdate = true;
 			startService(new Intent(this, UpdateService.class));
+		} else if (key.equals(Settings.PREF_ANOTHERWAY_UPDATE_WIDGET)) {
+			mAnotherWayUpdatWidget = prefs.getBoolean(Settings.PREF_ANOTHERWAY_UPDATE_WIDGET, false);
+			updateWidget(this);
 		}
 	}
 }

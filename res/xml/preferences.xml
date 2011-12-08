@@ -30,6 +30,11 @@
 		android:title="@string/bc_no_scroll_title_text"
 		android:summary="@string/bc_no_scroll_summary_text"
 		android:defaultValue="false" />
+
+	<CheckBoxPreference android:key="update_widget" 
+		android:title="@string/bc_anotherway_update_widget_title_text"
+		android:summary="@string/bc_anotherway_update_widget_summary_text"
+		android:defaultValue="false" />
 		
 </PreferenceCategory>
 

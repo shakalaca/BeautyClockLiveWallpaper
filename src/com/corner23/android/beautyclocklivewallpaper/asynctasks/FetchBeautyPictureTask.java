@@ -365,6 +365,7 @@ public class FetchBeautyPictureTask extends AsyncTask<Integer, Void, Integer> {
 					saveBitmapToFile(bitmap, _file_sdcard);
 				} else {
 					saveBitmapToFile(bitmap, _file_cache);
+					_file_cache.setReadable(true, false);
 				}
 
 				ret = BCLW_FETCH_STATE_SUCCESS;

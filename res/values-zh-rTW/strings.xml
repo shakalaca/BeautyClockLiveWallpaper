@@ -27,6 +27,9 @@
 	
 	<string name="bc_no_scroll_title_text">取消捲動</string>
 	<string name="bc_no_scroll_summary_text">只顯示圖片中間部分</string>
+
+	<string name="bc_anotherway_update_widget_title_text">新方式更新桌面工具</string>
+	<string name="bc_anotherway_update_widget_summary_text">如果桌面工具一直無法顯示, 請試著開啟這選項</string>
 	
 	<string name="bc_network_section_text">網路設定</string>
 	<string name="bc_bg_fetch_frequency_title_text">背景抓圖頻率</string>
