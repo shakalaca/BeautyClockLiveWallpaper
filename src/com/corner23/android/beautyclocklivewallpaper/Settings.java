@@ -41,14 +41,13 @@ public class Settings extends PreferenceActivity
 		} else {
 	        addPreferencesFromResource(R.xml.preferences);
 		}
-/*		
+
 		PreferenceCategory bcdw_section = (PreferenceCategory) findPreference("bcdw_section");
 		if (bcdw_section != null) {
-			if (Build.VERSION.SDK_INT >= 11) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				getPreferenceScreen().removePreference(bcdw_section);
 			}
 		}
-*/        
 		
         getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);        
     }
